@@ -1,0 +1,16 @@
+{
+    "manifest_version": 3,
+    "name": "Tab Group Link Exporter",
+    "version": "1.0",
+    "description": "Copy links from a Chrome tab group and save them to a text file.",
+    "permissions": ["tabs", "tabGroups", "downloads"],
+    "host_permissions": ["<all_urls>"],
+    "action": {
+      "default_popup": "src/popup.html",
+      "default_icon": "assets/tab_optimizer_icon.png"
+    },
+    "background": {
+      "service_worker": "src/background.js"
+    }
+  }
+  
