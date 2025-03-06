@@ -72,15 +72,33 @@ chrome.tabGroups.onUpdated.addListener((group) => {
     console.log('Tab removed:', tabId);
     delete tabLastAccessed[tabId];
     saveTabAccessTimes();
+    invalidateCache();
+    
+    // Notify the popup that a tab was closed
+    chrome.runtime.sendMessage({ action: 'tabRemoved', tabId });
   });
 
   // Initialize tracking when extension loads
   initializeTabTracking();
 
-  // Cache for tab analytics to avoid repeated history lookups
+  // Optimize the cache handling in the background script
   let tabAnalyticsCache = null;
   let lastCacheTime = 0;
-  const CACHE_LIFETIME = 60000; // Cache valid for 1 minute
+  const CACHE_LIFETIME = 1000; // 1 second cache lifetime
+
+  // Update your tab event listeners to be more efficient
+  const invalidateCache = () => {
+    tabAnalyticsCache = null;
+    lastCacheTime = 0;
+  };
+
+  chrome.tabs.onCreated.addListener(invalidateCache);
+  chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
+    // Only invalidate on complete to avoid multiple refreshes
+    if (changeInfo.status === 'complete') {
+      invalidateCache();
+    }
+  });
 
   // Handle messages from the popup
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

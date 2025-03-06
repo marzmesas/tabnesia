@@ -5,9 +5,6 @@ import { OldTabs } from './components/OldTabs';
 import './styles/index.css';
 
 export const App: React.FC = () => {
-  // Add a very obvious console log to verify this version is running
-  console.log("NEW VERSION WITH TABNESIA TITLE - " + new Date().toISOString());
-  
   return (
     <div className="app-container">
       <div className="app-header">

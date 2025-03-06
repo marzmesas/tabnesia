@@ -125,15 +125,16 @@ button:hover {
     rgba(255, 75, 255, 0.1)
   );
   border-radius: 8px;
-  padding: 10px;
+  padding: 12px;
   margin-bottom: 16px;
   margin-top: 5px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  gap: 10px;
   border: 1px solid var(--border-color);
-  transform: scale(0.9);
+  transform: scale(0.95);
   transform-origin: top center;
+  transition: all 0.3s ease;
 }
 
 .stat-item {
@@ -141,12 +142,13 @@ button:hover {
 }
 
 .stat-value {
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-weight: 600;
   background: linear-gradient(90deg, #2b67ff, #4b87ff, #8f4bff, #ff4bff);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  transition: all 0.3s ease;
 }
 
 .stat-label {
