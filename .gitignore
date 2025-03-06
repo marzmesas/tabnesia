@@ -1,14 +1,14 @@
-+ # Build output
-+ dist/
-+ 
-+ # Dependencies
-+ node_modules/
-+ package-lock.json
-+ 
-+ # IDE and OS files
-+ .DS_Store
-+ .vscode/
-+ .idea/
-+ *.logdist/
+# Build output
+dist/
+ 
+# Dependencies
+node_modules/
+package-lock.json
+
+# IDE and OS files
+.DS_Store
+.vscode/
+.idea/
+*.logdist/
 node_modules/
 package-lock.json
