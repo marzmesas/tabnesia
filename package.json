@@ -1,0 +1,29 @@
+{
+    "name": "y",
+    "version": "1.0.0",
+    "description": "Tab analytics to improve your RAM usage in Google Chrome. Delete unused tabs to give more room to your computer's performance!",
+    "main": "src/index.tsx",
+    "scripts": {
+        "build": "webpack --config webpack.config.js",
+        "watch": "webpack --watch --config webpack.config.js",
+        "prepare-dist": "mkdir -p dist/assets && cp src/popup.html dist/ && cp src/background.js dist/ && cp manifest.json dist/ && cp -r assets/* dist/assets/"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@emotion/styled": "^11.14.0",
+        "@types/react": "^19.0.10",
+        "@types/react-dom": "^19.0.4",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "typescript": "^5.8.2"
+    },
+    "devDependencies": {
+        "@types/chrome": "^0.0.308",
+        "css-loader": "^7.1.2",
+        "style-loader": "^4.0.0",
+        "ts-loader": "^9.5.2",
+        "webpack": "^5.98.0",
+        "webpack-cli": "^6.0.1"
+    }
+}
