@@ -130,7 +130,7 @@ button:hover {
   margin-top: 5px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 12px;
   border: 1px solid var(--border-color);
   transform: scale(0.95);
   transform-origin: top center;
@@ -374,9 +374,11 @@ ul::-webkit-scrollbar-thumb:hover {
 }
 
 .section-description {
-  margin: 6px 14px;
+  margin: 8px 16px;
   font-size: 0.85rem;
   color: var(--text-secondary);
+  line-height: 1.4;
+  padding-bottom: 4px;
 }
 
 /* Remove or comment out these styles */
@@ -429,4 +431,54 @@ ul::-webkit-scrollbar-thumb:hover {
 
 .analytics-wrapper {
   margin-top: -5px;
+}
+
+/* Add styles for the active tabs section */
+.section-container:nth-child(3) .section-header {
+  background: linear-gradient(90deg, 
+    rgba(75, 255, 135, 0.15), 
+    rgba(75, 255, 175, 0.15)
+  );
+}
+
+.section-container:nth-child(3) .section-header:hover {
+  background: linear-gradient(90deg, 
+    rgba(75, 255, 135, 0.25), 
+    rgba(75, 255, 175, 0.25)
+  );
+}
+
+.section-container:nth-child(3) .section-header h2 {
+  background: linear-gradient(90deg, #4bff87, #4bffaf);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Update the stats container to better display four items */
+.stats-container {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+/* Add color coding for the stat values */
+.stat-item:nth-child(2) .stat-value {
+  background: linear-gradient(90deg, #4bff87, #4bffaf);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.stat-item:nth-child(3) .stat-value {
+  background: linear-gradient(90deg, #ffbf4b, #ffd74b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.stat-item:nth-child(4) .stat-value {
+  background: linear-gradient(90deg, #ff4b4b, #ff4b87);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 } 

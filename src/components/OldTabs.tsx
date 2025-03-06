@@ -41,7 +41,7 @@ export const OldTabs: React.FC = () => {
         <h2>Forgotten Tabs</h2>
       </div>
       <p className="section-description">
-        These tabs haven't been opened for more than 30 days
+        Tabs that you have not opened for more than 30 days. Maybe it's time to let go...
       </p>
       
       {isExpanded && (

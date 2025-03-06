@@ -2,6 +2,7 @@ import React from 'react';
 import { UnusedTabs } from './components/UnusedTabs';
 import { TabAnalytics } from './components/TabAnalytics';
 import { OldTabs } from './components/OldTabs';
+import { ActiveTabs } from './components/ActiveTabs';
 import './styles/index.css';
 
 export const App: React.FC = () => {
@@ -14,6 +15,7 @@ export const App: React.FC = () => {
         </div>
       </div>
       <TabAnalytics />
+      <ActiveTabs />
       <UnusedTabs />
       <OldTabs />
     </div>

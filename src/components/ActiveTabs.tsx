@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTabAnalytics } from '../hooks/useTabAnalytics';
 import { TabDetails } from './TabDetails';
 
-export const UnusedTabs: React.FC = () => {
+export const ActiveTabs: React.FC = () => {
   const { tabs, loading, error, closeTab } = useTabAnalytics();
   const [selectedTab, setSelectedTab] = useState<number | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -21,9 +21,8 @@ export const UnusedTabs: React.FC = () => {
     }
   };
 
-  // Define time thresholds
+  // Define time threshold
   const fiveDaysAgo = Date.now() - (5 * 24 * 60 * 60 * 1000);
-  const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -46,10 +45,10 @@ export const UnusedTabs: React.FC = () => {
     );
   }
 
-  // Filter tabs for this section - between 5 and 30 days old
-  const recentlyInactiveTabs = (tabs || [])
-    .filter(tab => tab.lastAccessed < fiveDaysAgo && tab.lastAccessed >= thirtyDaysAgo)
-    .sort((a, b) => a.lastAccessed - b.lastAccessed);
+  // Filter tabs for active tabs - less than 5 days old
+  const activeTabs = (tabs || [])
+    .filter(tab => tab.lastAccessed >= fiveDaysAgo)
+    .sort((a, b) => b.lastAccessed - a.lastAccessed); // Most recent first
 
   return (
     <div className="section-container">
@@ -57,10 +56,10 @@ export const UnusedTabs: React.FC = () => {
         className="section-header" 
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <h2>Recently Inactive Tabs</h2>
+        <h2>Active Tabs</h2>
       </div>
       <p className="section-description">
-        Tabs you last visited between 5 and 30 days ago. You might still remember what they are!
+        Tabs you've visited in the last 5 days
       </p>
       
       {isExpanded && (
@@ -71,7 +70,7 @@ export const UnusedTabs: React.FC = () => {
           </div>
         ) : (
           <ul>
-            {recentlyInactiveTabs.map(tab => (
+            {activeTabs.map(tab => (
               <li key={tab.id}>
                 <div className="tab-list-item">
                   <span className="tab-title">{tab.title}</span>
@@ -80,8 +79,8 @@ export const UnusedTabs: React.FC = () => {
                 <button onClick={() => setSelectedTab(tab.id)}>Details</button>
               </li>
             ))}
-            {recentlyInactiveTabs.length === 0 && (
-              <p>No recently inactive tabs found</p>
+            {activeTabs.length === 0 && (
+              <p>No active tabs found</p>
             )}
           </ul>
         )
