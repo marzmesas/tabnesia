@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "Tab Group Analyzer",
+    "name": "Tabnesia",
     "version": "1.1",
-    "description": "Analyze and manage your Chrome tabs and groups with usage statistics.",
+    "description": "Because we all forget what we opened. Analyze and manage your Chrome tabs with usage statistics.",
     "permissions": [
       "tabs",
       "tabGroups",
