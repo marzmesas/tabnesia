@@ -9,4 +9,6 @@
 + .DS_Store
 + .vscode/
 + .idea/
-+ *.log
++ *.logdist/
+node_modules/
+package-lock.json
