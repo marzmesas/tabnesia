@@ -481,4 +481,48 @@ ul::-webkit-scrollbar-thumb:hover {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+/* Recently Inactive Tabs - Yellow/Orange gradient */
+.section-container:nth-child(4) .section-header {
+  background: linear-gradient(90deg, 
+    rgba(255, 191, 75, 0.15), 
+    rgba(255, 215, 75, 0.15)
+  );
+}
+
+.section-container:nth-child(4) .section-header:hover {
+  background: linear-gradient(90deg, 
+    rgba(255, 191, 75, 0.25), 
+    rgba(255, 215, 75, 0.25)
+  );
+}
+
+.section-container:nth-child(4) .section-header h2 {
+  background: linear-gradient(90deg, #ffbf4b, #ffd74b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Forgotten Tabs - Red/Pink gradient */
+.section-container:nth-child(5) .section-header {
+  background: linear-gradient(90deg, 
+    rgba(255, 75, 75, 0.15), 
+    rgba(255, 75, 135, 0.15)
+  );
+}
+
+.section-container:nth-child(5) .section-header:hover {
+  background: linear-gradient(90deg, 
+    rgba(255, 75, 75, 0.25), 
+    rgba(255, 75, 135, 0.25)
+  );
+}
+
+.section-container:nth-child(5) .section-header h2 {
+  background: linear-gradient(90deg, #ff4b4b, #ff4b87);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 } 
