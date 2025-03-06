@@ -1,13 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Tab Group Link Exporter</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Tab Group Analyzer</title>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      width: 400px;
+      min-height: 300px;
+      margin: 0;
+      padding: 0;
+      background-color: #1a1b23;
+    }
+    #root {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
 </head>
 <body>
-  <h1>Select a Tab Group</h1>
-  <div id="groups"></div>
-  <button id="download">Download Links</button>
-  <script src="popup.js"></script>
+  <div id="root"></div>
+  <script src="index.js"></script>
 </body>
 </html>

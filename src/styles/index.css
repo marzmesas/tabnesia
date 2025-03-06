@@ -1,0 +1,111 @@
+:root {
+  --bg-primary: #1a1b23;
+  --bg-secondary: #252632;
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+  --accent-primary: #6366f1;
+  --accent-secondary: #818cf8;
+  --border-color: #2d2e3d;
+}
+
+.app-container {
+  padding: 12px;
+  width: 400px;
+  box-sizing: border-box;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+  gap: 12px;
+  transition: background-color 0.2s;
+}
+
+li:hover {
+  background-color: rgba(99, 102, 241, 0.1);
+}
+
+li:last-child {
+  border-bottom: none;
+}
+
+li > span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-primary);
+}
+
+button {
+  padding: 6px 12px;
+  background-color: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  flex-shrink: 0;
+  min-width: 60px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+button:hover {
+  background-color: var(--accent-secondary);
+  transform: translateY(-1px);
+}
+
+.stats-container {
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+}
+
+.stat-label {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin-top: 4px;
+} 
