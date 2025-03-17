@@ -74,8 +74,17 @@ chrome.tabGroups.onUpdated.addListener((group) => {
     saveTabAccessTimes();
     invalidateCache();
     
-    // Notify the popup that a tab was closed
-    chrome.runtime.sendMessage({ action: 'tabRemoved', tabId });
+    // Try to notify the popup that a tab was closed, with error handling
+    try {
+      chrome.runtime.sendMessage({ action: 'tabRemoved', tabId }, response => {
+        if (chrome.runtime.lastError) {
+          // This is normal when popup isn't open - no need to do anything
+          console.log('Popup not available to receive message - this is normal');
+        }
+      });
+    } catch (error) {
+      console.log('Error sending message to popup:', error);
+    }
   });
 
   // Initialize tracking when extension loads

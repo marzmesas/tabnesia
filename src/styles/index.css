@@ -8,6 +8,91 @@
   --border-color: #2d2e3d;
 }
 
+/* Light theme variables */
+[data-theme="light"] {
+  --bg-primary: #f5f7fa;
+  --bg-secondary: #e9ecef;
+  --text-primary: #1a1b23;
+  --text-secondary: #4b5563;
+  --border-color: #d1d5db;
+  
+  /* Darker gradient colors for light mode */
+  --green-gradient-start: #00a352;
+  --green-gradient-end: #008f7a;
+  --yellow-gradient-start: #d68c00;
+  --yellow-gradient-end: #c87800;
+  
+  /* Background colors with opacity */
+  --green-bg-light: rgba(0, 163, 82, 0.15);
+  --green-bg-hover: rgba(0, 163, 82, 0.25);
+  --yellow-bg-light: rgba(214, 140, 0, 0.15);
+  --yellow-bg-hover: rgba(214, 140, 0, 0.25);
+}
+
+/* Dark theme variables remain the same as root */
+[data-theme="dark"] {
+  --bg-primary: #1a1b23;
+  --bg-secondary: #252632;
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+  --border-color: #2d2e3d;
+  
+  /* Original gradient colors for dark mode */
+  --green-gradient-start: #4bff87;
+  --green-gradient-end: #4bffaf;
+  --yellow-gradient-start: #ffbf4b;
+  --yellow-gradient-end: #ffd74b;
+  
+  /* Background colors with opacity */
+  --green-bg-light: rgba(75, 255, 135, 0.15);
+  --green-bg-hover: rgba(75, 255, 135, 0.25);
+  --yellow-bg-light: rgba(255, 191, 75, 0.15);
+  --yellow-bg-hover: rgba(255, 191, 75, 0.25);
+}
+
+/* Theme toggle styles */
+.theme-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-primary);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 0;
+}
+
+/* Style for when the theme is transitioning */
+.theme-toggle.transitioning {
+  pointer-events: none; /* Prevent clicking during transition */
+}
+
+.theme-icon {
+  transition: transform 0.4s ease-out;
+}
+
+.theme-toggle:hover .theme-icon {
+  transform: rotate(20deg);
+}
+
+/* Add smooth transitions to the main elements that change with theme */
+:root, 
+[data-theme="light"], 
+[data-theme="dark"],
+.app-container,
+.theme-toggle,
+.theme-icon {
+  transition-property: color, background-color, border-color;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}
+
 .app-container {
   padding: 10px;
   width: 350px;
@@ -436,20 +521,20 @@ ul::-webkit-scrollbar-thumb:hover {
 /* Add styles for the active tabs section */
 .section-container:nth-child(3) .section-header {
   background: linear-gradient(90deg, 
-    rgba(75, 255, 135, 0.15), 
-    rgba(75, 255, 175, 0.15)
+    var(--green-bg-light), 
+    var(--green-bg-light)
   );
 }
 
 .section-container:nth-child(3) .section-header:hover {
   background: linear-gradient(90deg, 
-    rgba(75, 255, 135, 0.25), 
-    rgba(75, 255, 175, 0.25)
+    var(--green-bg-hover), 
+    var(--green-bg-hover)
   );
 }
 
 .section-container:nth-child(3) .section-header h2 {
-  background: linear-gradient(90deg, #4bff87, #4bffaf);
+  background: linear-gradient(90deg, var(--green-gradient-start), var(--green-gradient-end));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -463,14 +548,14 @@ ul::-webkit-scrollbar-thumb:hover {
 
 /* Add color coding for the stat values */
 .stat-item:nth-child(2) .stat-value {
-  background: linear-gradient(90deg, #4bff87, #4bffaf);
+  background: linear-gradient(90deg, var(--green-gradient-start), var(--green-gradient-end));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 .stat-item:nth-child(3) .stat-value {
-  background: linear-gradient(90deg, #ffbf4b, #ffd74b);
+  background: linear-gradient(90deg, var(--yellow-gradient-start), var(--yellow-gradient-end));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -486,20 +571,20 @@ ul::-webkit-scrollbar-thumb:hover {
 /* Recently Inactive Tabs - Yellow/Orange gradient */
 .section-container:nth-child(4) .section-header {
   background: linear-gradient(90deg, 
-    rgba(255, 191, 75, 0.15), 
-    rgba(255, 215, 75, 0.15)
+    var(--yellow-bg-light), 
+    var(--yellow-bg-light)
   );
 }
 
 .section-container:nth-child(4) .section-header:hover {
   background: linear-gradient(90deg, 
-    rgba(255, 191, 75, 0.25), 
-    rgba(255, 215, 75, 0.25)
+    var(--yellow-bg-hover), 
+    var(--yellow-bg-hover)
   );
 }
 
 .section-container:nth-child(4) .section-header h2 {
-  background: linear-gradient(90deg, #ffbf4b, #ffd74b);
+  background: linear-gradient(90deg, var(--yellow-gradient-start), var(--yellow-gradient-end));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
