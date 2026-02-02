@@ -25,6 +25,7 @@ interface TabContextValue {
   loading: boolean;
   error: string | null;
   closeTab: (tabId: number) => Promise<void>;
+  closeMultipleTabs: (tabIds: number[]) => Promise<void>;
   refreshData: () => Promise<void>;
 }
 
@@ -105,8 +106,19 @@ export const TabProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  const closeMultipleTabs = async (tabIds: number[]) => {
+    try {
+      await chrome.tabs.remove(tabIds);
+      const updatedTabs = tabs.filter(tab => !tabIds.includes(tab.id));
+      tabsRef.current = updatedTabs;
+      setTabs(updatedTabs);
+    } catch (err) {
+      console.error('Failed to close tabs:', err);
+    }
+  };
+
   return (
-    <TabContext.Provider value={{ tabs, loading, error, closeTab, refreshData: () => fetchAnalytics(false) }}>
+    <TabContext.Provider value={{ tabs, loading, error, closeTab, closeMultipleTabs, refreshData: () => fetchAnalytics(false) }}>
       {children}
     </TabContext.Provider>
   );
