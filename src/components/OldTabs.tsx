@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { useTabAnalytics } from '../hooks/useTabAnalytics';
+import { useTabContext } from '../context/TabContext';
 import { TabDetails } from './TabDetails';
+import { getColorVariables } from '../utils/colors';
 
 export const OldTabs: React.FC = () => {
-  const { tabs, loading, error, closeTab } = useTabAnalytics();
+  const { tabs, loading, error, closeTab } = useTabContext();
   const [selectedTab, setSelectedTab] = useState<number | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -79,20 +80,4 @@ export const OldTabs: React.FC = () => {
       )}
     </div>
   );
-};
-
-// Helper function to get color variables
-const getColorVariables = (color: string) => {
-  const colors: Record<string, { bg: string; text: string }> = {
-    grey: { bg: '#707280', text: '#ffffff' },
-    blue: { bg: '#4b87ff', text: '#ffffff' },
-    red: { bg: '#ff4b4b', text: '#ffffff' },
-    yellow: { bg: '#ffbf00', text: '#000000' },
-    green: { bg: '#4bff4b', text: '#000000' },
-    pink: { bg: '#ff4bff', text: '#ffffff' },
-    purple: { bg: '#8f4bff', text: '#ffffff' },
-    cyan: { bg: '#4bffff', text: '#000000' },
-  };
-
-  return colors[color] || { bg: '#707280', text: '#ffffff' };
 }; 

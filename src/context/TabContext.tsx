@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 
 export interface TabAnalytics {
   id: number;
@@ -20,21 +20,29 @@ interface TabResponse {
   lastAccessed: number;
 }
 
-export const useTabAnalytics = () => {
+interface TabContextValue {
+  tabs: TabAnalytics[];
+  loading: boolean;
+  error: string | null;
+  closeTab: (tabId: number) => Promise<void>;
+  refreshData: () => Promise<void>;
+}
+
+const TabContext = createContext<TabContextValue | undefined>(undefined);
+
+export const TabProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [tabs, setTabs] = useState<TabAnalytics[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const tabsRef = useRef<TabAnalytics[]>([]);
   const isInitialLoadRef = useRef(true);
 
-  // Function to fetch tab analytics data
   const fetchAnalytics = useCallback(async (isInitialLoad = false) => {
     if (isInitialLoad) {
       setLoading(true);
     }
-    
+
     try {
-      // First get all groups
       const groups = await chrome.runtime.sendMessage({ action: 'getTabGroups' });
       const groupMap = new Map(groups.map((group: any) => [
         group.id,
@@ -46,13 +54,16 @@ export const useTabAnalytics = () => {
         ...tab,
         groupDetails: tab.groupId !== -1 ? groupMap.get(tab.groupId) : undefined
       }));
-      
-      // Only update state if the tabs have actually changed
-      // This prevents unnecessary re-renders
-      const hasChanged = JSON.stringify(newTabs) !== JSON.stringify(tabsRef.current);
-      
+
+      // Only update state if tabs have changed (compare by tab IDs and lastAccessed)
+      const hasChanged = newTabs.length !== tabsRef.current.length ||
+        newTabs.some((tab: TabAnalytics, i: number) =>
+          !tabsRef.current[i] ||
+          tab.id !== tabsRef.current[i].id ||
+          tab.lastAccessed !== tabsRef.current[i].lastAccessed
+        );
+
       if (hasChanged) {
-        console.log("Tabs have changed, updating state");
         tabsRef.current = newTabs;
         setTabs(newTabs);
       }
@@ -67,32 +78,25 @@ export const useTabAnalytics = () => {
     }
   }, []);
 
-  // Fetch data when component mounts
   useEffect(() => {
     fetchAnalytics(true);
-    
-    // Set up a listener for tab changes
+
     const handleTabChange = () => {
-      console.log("Tab change detected, refreshing data");
       fetchAnalytics(false);
     };
-    
-    // Listen for tab events directly in the hook
+
     chrome.tabs.onRemoved.addListener(handleTabChange);
     chrome.tabs.onCreated.addListener(handleTabChange);
-    
+
     return () => {
-      // Clean up listeners when component unmounts
       chrome.tabs.onRemoved.removeListener(handleTabChange);
       chrome.tabs.onCreated.removeListener(handleTabChange);
     };
   }, [fetchAnalytics]);
 
-  // Function to close a tab and update the state immediately
   const closeTab = async (tabId: number) => {
     try {
       await chrome.tabs.remove(tabId);
-      // Immediately update the local state
       const updatedTabs = tabs.filter(tab => tab.id !== tabId);
       tabsRef.current = updatedTabs;
       setTabs(updatedTabs);
@@ -101,5 +105,17 @@ export const useTabAnalytics = () => {
     }
   };
 
-  return { tabs, loading, error, closeTab, refreshData: fetchAnalytics };
-}; 
+  return (
+    <TabContext.Provider value={{ tabs, loading, error, closeTab, refreshData: () => fetchAnalytics(false) }}>
+      {children}
+    </TabContext.Provider>
+  );
+};
+
+export const useTabContext = (): TabContextValue => {
+  const context = useContext(TabContext);
+  if (!context) {
+    throw new Error('useTabContext must be used within a TabProvider');
+  }
+  return context;
+};

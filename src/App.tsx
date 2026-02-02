@@ -5,10 +5,12 @@ import { OldTabs } from './components/OldTabs';
 import { ActiveTabs } from './components/ActiveTabs';
 import { ThemeToggle } from './components/ThemeToggle';
 import { ThemeProvider } from './hooks/useTheme';
+import { TabProvider } from './context/TabContext';
 import './styles/index.css';
 
 export const App: React.FC = () => {
   return (
+    <TabProvider>
     <ThemeProvider>
       <div className="app-container">
         <div className="app-header">
@@ -24,5 +26,6 @@ export const App: React.FC = () => {
         <OldTabs />
       </div>
     </ThemeProvider>
+    </TabProvider>
   );
 }; 

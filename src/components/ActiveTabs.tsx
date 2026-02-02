@@ -1,25 +1,12 @@
 import React, { useState } from 'react';
-import { useTabAnalytics } from '../hooks/useTabAnalytics';
+import { useTabContext } from '../context/TabContext';
 import { TabDetails } from './TabDetails';
+import { formatTime } from '../utils/formatTime';
 
 export const ActiveTabs: React.FC = () => {
-  const { tabs, loading, error, closeTab } = useTabAnalytics();
+  const { tabs, loading, error, closeTab } = useTabContext();
   const [selectedTab, setSelectedTab] = useState<number | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
-  
-  const formatTime = (timestamp: number) => {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffInMinutes = (now.getTime() - date.getTime()) / (1000 * 60);
-    
-    if (diffInMinutes < 60) {
-      return `${Math.floor(diffInMinutes)}m ago`;
-    } else if (diffInMinutes < 1440) {
-      return `${Math.floor(diffInMinutes / 60)}h ago`;
-    } else {
-      return `${Math.floor(diffInMinutes / 1440)}d ago`;
-    }
-  };
 
   // Define time threshold
   const fiveDaysAgo = Date.now() - (5 * 24 * 60 * 60 * 1000);

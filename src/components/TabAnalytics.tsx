@@ -1,8 +1,8 @@
 import React from 'react';
-import { useTabAnalytics } from '../hooks/useTabAnalytics';
+import { useTabContext } from '../context/TabContext';
 
 export const TabAnalytics: React.FC = () => {
-  const { tabs, loading, error } = useTabAnalytics();
+  const { tabs, loading, error } = useTabContext();
 
   // Define time thresholds
   const fiveDaysAgo = Date.now() - (5 * 24 * 60 * 60 * 1000);

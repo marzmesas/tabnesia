@@ -1,5 +1,5 @@
 import React from 'react';
-import type { TabAnalytics } from '../hooks/useTabAnalytics';
+import type { TabAnalytics } from '../context/TabContext';
 import { GroupBadge } from './GroupBadge';
 
 interface TabDetailsProps {
