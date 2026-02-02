@@ -1,10 +1,10 @@
 // Listen for changes in tab groups (optional future feature)
 chrome.tabGroups.onUpdated.addListener((group) => {
-    console.log('Tab group updated:', group);
+    // Tab group updated - future feature hook
   });
-  
+
   chrome.tabGroups.onRemoved.addListener((groupId) => {
-    console.log(`Tab group with ID ${groupId} was removed.`);
+    // Tab group removed - future feature hook
   });
   
   // Use a more robust approach to track tab access times
@@ -22,11 +22,11 @@ chrome.tabGroups.onUpdated.addListener((group) => {
       const now = Date.now();
       
       // Create timestamps for tabs that don't have one
+      // Use current time - new tabs should start as "active"
       let updated = false;
       tabs.forEach(tab => {
         if (!tabLastAccessed[tab.id]) {
-          // Assign different timestamps based on tab index to create variety
-          tabLastAccessed[tab.id] = now - (tab.index * 60000); // Stagger by minutes
+          tabLastAccessed[tab.id] = now;
           updated = true;
         }
       });
@@ -35,7 +35,6 @@ chrome.tabGroups.onUpdated.addListener((group) => {
         await chrome.storage.local.set({ tabLastAccessed });
       }
       
-      console.log('Tab tracking initialized with', Object.keys(tabLastAccessed).length, 'tabs');
     } catch (error) {
       console.error('Error initializing tab tracking:', error);
     }
@@ -45,7 +44,6 @@ chrome.tabGroups.onUpdated.addListener((group) => {
   const saveTabAccessTimes = async () => {
     try {
       await chrome.storage.local.set({ tabLastAccessed });
-      console.log('Saved tab access times');
     } catch (error) {
       console.error('Error saving tab access times:', error);
     }
@@ -53,7 +51,6 @@ chrome.tabGroups.onUpdated.addListener((group) => {
 
   // Track when a tab is activated (user switches to it)
   chrome.tabs.onActivated.addListener(async (activeInfo) => {
-    console.log('Tab activated:', activeInfo.tabId);
     tabLastAccessed[activeInfo.tabId] = Date.now();
     saveTabAccessTimes();
   });
@@ -61,7 +58,6 @@ chrome.tabGroups.onUpdated.addListener((group) => {
   // Track when a tab is updated (e.g., page load completes)
   chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete') {
-      console.log('Tab updated:', tabId);
       tabLastAccessed[tabId] = Date.now();
       saveTabAccessTimes();
     }
@@ -69,21 +65,18 @@ chrome.tabGroups.onUpdated.addListener((group) => {
 
   // Clean up removed tabs
   chrome.tabs.onRemoved.addListener((tabId) => {
-    console.log('Tab removed:', tabId);
     delete tabLastAccessed[tabId];
     saveTabAccessTimes();
     invalidateCache();
-    
-    // Try to notify the popup that a tab was closed, with error handling
+
+    // Try to notify the popup that a tab was closed
     try {
-      chrome.runtime.sendMessage({ action: 'tabRemoved', tabId }, response => {
-        if (chrome.runtime.lastError) {
-          // This is normal when popup isn't open - no need to do anything
-          console.log('Popup not available to receive message - this is normal');
-        }
+      chrome.runtime.sendMessage({ action: 'tabRemoved', tabId }, () => {
+        // Ignore errors - popup may not be open
+        chrome.runtime.lastError;
       });
-    } catch (error) {
-      console.log('Error sending message to popup:', error);
+    } catch {
+      // Popup not available - this is normal
     }
   });
 
@@ -127,14 +120,12 @@ chrome.tabGroups.onUpdated.addListener((group) => {
       // Check if we have a valid cache
       const now = Date.now();
       if (tabAnalyticsCache && (now - lastCacheTime < CACHE_LIFETIME)) {
-        console.log('Using cached tab analytics');
         sendResponse(tabAnalyticsCache);
         return true;
       }
 
       chrome.tabs.query({}, async (tabs) => {
         try {
-          console.log('Fetching fresh tab analytics for', tabs.length, 'tabs');
           
           // Get all URLs that we can query (http/https only)
           const urlTabs = tabs.filter(tab => tab.url.startsWith('http'));
@@ -154,32 +145,23 @@ chrome.tabGroups.onUpdated.addListener((group) => {
           });
           
           // Process each tab and create the results array directly
-          const results = tabs.map((tab, index) => {
-            // Look up the visit time from our map
+          const results = tabs.map((tab) => {
+            // Look up the visit time from our map (history API)
             let lastVisitTime = urlToVisitTime.get(tab.url);
-            
-            // If we couldn't get history, use a deterministic time based on tab ID
+
+            // If no history available, fall back to our tracked access times
             if (!lastVisitTime) {
-              // Generate a wide range of timestamps for testing
-              // Some tabs will be very old (60-90 days), some medium (15-30 days), some recent (1-7 days)
-              const category = index % 3;
-              let dayOffset;
-              
-              if (category === 0) {
-                // Very old tabs (60-90 days)
-                dayOffset = 60 + (tab.id % 30);
-              } else if (category === 1) {
-                // Medium old tabs (15-30 days)
-                dayOffset = 15 + (tab.id % 15);
-              } else {
-                // Recent tabs (1-7 days)
-                dayOffset = 1 + (tab.id % 7);
-              }
-              
-              lastVisitTime = Date.now() - (dayOffset * 24 * 60 * 60 * 1000);
-              console.log(`Tab ${tab.id} (${tab.title.substring(0, 20)}...) set to ${dayOffset} days ago`);
+              lastVisitTime = tabLastAccessed[tab.id];
             }
-            
+
+            // If still no data, use current time (tab is newly discovered)
+            // This ensures new tabs start as "active" rather than being falsely categorized as forgotten
+            if (!lastVisitTime) {
+              lastVisitTime = Date.now();
+              // Store this so we track it going forward
+              tabLastAccessed[tab.id] = lastVisitTime;
+            }
+
             return {
               id: tab.id,
               url: tab.url,
