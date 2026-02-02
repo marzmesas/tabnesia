@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { TabAnalytics } from '../context/TabContext';
 import { GroupBadge } from './GroupBadge';
+import { ConfirmDialog } from './ConfirmDialog';
 
 interface TabDetailsProps {
   tab: TabAnalytics;
@@ -9,8 +10,8 @@ interface TabDetailsProps {
 }
 
 export const TabDetails: React.FC<TabDetailsProps> = ({ tab, onClose, onBack }) => {
-  // Store the timestamp when component mounts to prevent it from changing
-  const [timestamp] = React.useState(tab.lastAccessed);
+  const [timestamp] = useState(tab.lastAccessed);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const formatLastAccessed = (timestamp: number) => {
     const date = new Date(timestamp);
@@ -22,7 +23,7 @@ export const TabDetails: React.FC<TabDetailsProps> = ({ tab, onClose, onBack }) 
     } else if (diffInMinutes < 60) {
       const minutes = Math.floor(diffInMinutes);
       return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-    } else if (diffInMinutes < 1440) { // less than 24 hours
+    } else if (diffInMinutes < 1440) {
       const hours = Math.floor(diffInMinutes / 60);
       return `${hours} hour${hours > 1 ? 's' : ''} ago`;
     } else {
@@ -35,8 +36,27 @@ export const TabDetails: React.FC<TabDetailsProps> = ({ tab, onClose, onBack }) 
     }
   };
 
+  const handleCloseClick = () => {
+    setShowConfirm(true);
+  };
+
+  const handleConfirm = () => {
+    setShowConfirm(false);
+    onClose(tab.id);
+  };
+
   return (
     <div className="tab-details">
+      <ConfirmDialog
+        isOpen={showConfirm}
+        title="Close Tab?"
+        message={`Are you sure you want to close "${tab.title.substring(0, 50)}${tab.title.length > 50 ? '...' : ''}"?`}
+        confirmLabel="Close"
+        cancelLabel="Cancel"
+        onConfirm={handleConfirm}
+        onCancel={() => setShowConfirm(false)}
+      />
+
       <button className="back-button" onClick={onBack}>← Back</button>
       <h2>{tab.title}</h2>
       <div className="details-container">
@@ -44,8 +64,8 @@ export const TabDetails: React.FC<TabDetailsProps> = ({ tab, onClose, onBack }) 
           <span className="detail-label">Group</span>
           <span className="detail-value">
             {tab.groupDetails ? (
-              <GroupBadge 
-                name={tab.groupDetails.name} 
+              <GroupBadge
+                name={tab.groupDetails.name}
                 color={tab.groupDetails.color}
               />
             ) : (
@@ -62,9 +82,9 @@ export const TabDetails: React.FC<TabDetailsProps> = ({ tab, onClose, onBack }) 
           <span className="detail-value url">{tab.url}</span>
         </div>
       </div>
-      <button className="close-button" onClick={() => onClose(tab.id)}>
+      <button className="close-button" onClick={handleCloseClick}>
         Close Tab
       </button>
     </div>
   );
-}; 
+};

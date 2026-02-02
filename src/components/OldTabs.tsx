@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTabContext } from '../context/TabContext';
 import { useSearchContext } from '../context/SearchContext';
 import { TabDetails } from './TabDetails';
+import { ConfirmDialog } from './ConfirmDialog';
 import { getColorVariables } from '../utils/colors';
 
 export const OldTabs: React.FC = () => {
@@ -11,6 +12,11 @@ export const OldTabs: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedForClose, setSelectedForClose] = useState<Set<number>>(new Set());
   const [isClosing, setIsClosing] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    type: 'selected' | 'all';
+    count: number;
+  }>({ isOpen: false, type: 'selected', count: 0 });
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -41,7 +47,7 @@ export const OldTabs: React.FC = () => {
     .filter(tab => !searchQuery ||
       tab.title.toLowerCase().includes(searchLower) ||
       tab.url.toLowerCase().includes(searchLower))
-    .sort((a, b) => b.lastAccessed - a.lastAccessed); // Most recent first (consistent with other sections)
+    .sort((a, b) => b.lastAccessed - a.lastAccessed);
 
   const toggleTabSelection = (tabId: number) => {
     const newSelection = new Set(selectedForClose);
@@ -61,24 +67,54 @@ export const OldTabs: React.FC = () => {
     setSelectedForClose(new Set());
   };
 
-  const handleCloseSelected = async () => {
+  const handleCloseSelectedClick = () => {
     if (selectedForClose.size === 0) return;
+    setConfirmDialog({
+      isOpen: true,
+      type: 'selected',
+      count: selectedForClose.size,
+    });
+  };
+
+  const handleCloseAllClick = () => {
+    if (oldTabs.length === 0) return;
+    setConfirmDialog({
+      isOpen: true,
+      type: 'all',
+      count: oldTabs.length,
+    });
+  };
+
+  const handleConfirmClose = async () => {
+    setConfirmDialog({ ...confirmDialog, isOpen: false });
     setIsClosing(true);
-    await closeMultipleTabs(Array.from(selectedForClose));
+
+    if (confirmDialog.type === 'selected') {
+      await closeMultipleTabs(Array.from(selectedForClose));
+    } else {
+      await closeMultipleTabs(oldTabs.map(tab => tab.id));
+    }
+
     setSelectedForClose(new Set());
     setIsClosing(false);
   };
 
-  const handleCloseAll = async () => {
-    if (oldTabs.length === 0) return;
-    setIsClosing(true);
-    await closeMultipleTabs(oldTabs.map(tab => tab.id));
-    setSelectedForClose(new Set());
-    setIsClosing(false);
+  const handleCancelClose = () => {
+    setConfirmDialog({ ...confirmDialog, isOpen: false });
   };
 
   return (
     <div className="section-container">
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        title={confirmDialog.type === 'all' ? 'Close All Tabs?' : 'Close Selected Tabs?'}
+        message={`Are you sure you want to close ${confirmDialog.count} tab${confirmDialog.count > 1 ? 's' : ''}? This action cannot be undone.`}
+        confirmLabel="Close"
+        cancelLabel="Cancel"
+        onConfirm={handleConfirmClose}
+        onCancel={handleCancelClose}
+      />
+
       <div
         className="section-header"
         onClick={() => setIsExpanded(!isExpanded)}
@@ -120,14 +156,14 @@ export const OldTabs: React.FC = () => {
                 <div className="close-buttons">
                   <button
                     className="close-selected-btn"
-                    onClick={handleCloseSelected}
+                    onClick={handleCloseSelectedClick}
                     disabled={isClosing || selectedForClose.size === 0}
                   >
                     {isClosing ? 'Closing...' : `Close Selected (${selectedForClose.size})`}
                   </button>
                   <button
                     className="close-all-btn"
-                    onClick={handleCloseAll}
+                    onClick={handleCloseAllClick}
                     disabled={isClosing}
                   >
                     Close All ({oldTabs.length})

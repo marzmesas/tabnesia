@@ -806,4 +806,66 @@ li.selected {
   color: var(--text-primary);
   background: none;
   transform: translateY(-50%);
+}
+
+/* Confirmation dialog styles */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.dialog-content {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 300px;
+  width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.dialog-title {
+  margin: 0 0 12px 0;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.dialog-message {
+  margin: 0 0 20px 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.dialog-cancel {
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.dialog-cancel:hover {
+  background-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dialog-confirm {
+  background: linear-gradient(90deg, #ff4b4b, #ff4b87);
+}
+
+.dialog-confirm:hover {
+  background: linear-gradient(90deg, #ff6b6b, #ff6ba7);
 } 
