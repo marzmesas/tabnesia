@@ -42,7 +42,7 @@ export const UnusedTabs: React.FC = () => {
     .filter(tab => !searchQuery ||
       tab.title.toLowerCase().includes(searchLower) ||
       tab.url.toLowerCase().includes(searchLower))
-    .sort((a, b) => a.lastAccessed - b.lastAccessed);
+    .sort((a, b) => b.lastAccessed - a.lastAccessed); // Most recent first (consistent with other sections)
 
   return (
     <div className="section-container">

@@ -40,7 +40,8 @@ export const OldTabs: React.FC = () => {
     .filter(tab => tab.lastAccessed < thirtyDaysAgo)
     .filter(tab => !searchQuery ||
       tab.title.toLowerCase().includes(searchLower) ||
-      tab.url.toLowerCase().includes(searchLower));
+      tab.url.toLowerCase().includes(searchLower))
+    .sort((a, b) => b.lastAccessed - a.lastAccessed); // Most recent first (consistent with other sections)
 
   const toggleTabSelection = (tabId: number) => {
     const newSelection = new Set(selectedForClose);
