@@ -17,9 +17,6 @@ export const TabDetails: React.FC<TabDetailsProps> = ({ tab, onClose, onBack }) 
     const now = new Date();
     const diffInMinutes = (now.getTime() - date.getTime()) / (1000 * 60);
 
-    // For debugging
-    console.log('Formatting timestamp:', timestamp, 'which is', new Date(timestamp).toLocaleString());
-
     if (diffInMinutes < 1) {
       return 'Just now';
     } else if (diffInMinutes < 60) {
@@ -59,10 +56,6 @@ export const TabDetails: React.FC<TabDetailsProps> = ({ tab, onClose, onBack }) 
         <div className="detail-item">
           <span className="detail-label">Last Visited</span>
           <span className="detail-value">{formatLastAccessed(timestamp)}</span>
-        </div>
-        <div className="detail-item">
-          <span className="detail-label">Debug Time</span>
-          <span className="detail-value">{new Date(timestamp).toLocaleString()}</span>
         </div>
         <div className="detail-item">
           <span className="detail-label">URL</span>
