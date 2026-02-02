@@ -10,17 +10,52 @@ chrome.tabGroups.onUpdated.addListener((group) => {
   // Use a more robust approach to track tab access times
   let tabLastAccessed = {};
 
+  // Clean up stale entries that are older than 90 days and don't correspond to open tabs
+  const cleanupStaleEntries = async () => {
+    try {
+      const tabs = await chrome.tabs.query({});
+      const currentTabIds = new Set(tabs.map(tab => tab.id));
+      const ninetyDaysAgo = Date.now() - (90 * 24 * 60 * 60 * 1000);
+
+      let cleaned = false;
+      const entriesToDelete = [];
+
+      for (const [tabId, timestamp] of Object.entries(tabLastAccessed)) {
+        const id = parseInt(tabId, 10);
+        // Remove entry if tab doesn't exist and timestamp is older than 90 days
+        if (!currentTabIds.has(id) && timestamp < ninetyDaysAgo) {
+          entriesToDelete.push(tabId);
+          cleaned = true;
+        }
+      }
+
+      // Delete stale entries
+      entriesToDelete.forEach(tabId => {
+        delete tabLastAccessed[tabId];
+      });
+
+      if (cleaned) {
+        await chrome.storage.local.set({ tabLastAccessed });
+      }
+    } catch (error) {
+      console.error('Error cleaning up stale entries:', error);
+    }
+  };
+
   // Initialize when extension loads
   const initializeTabTracking = async () => {
     try {
       // Load existing data
       const result = await chrome.storage.local.get('tabLastAccessed');
       tabLastAccessed = result.tabLastAccessed || {};
-      
+
+      // Clean up stale entries on startup
+      await cleanupStaleEntries();
+
       // Get current tabs and set initial timestamps for any new tabs
       const tabs = await chrome.tabs.query({});
       const now = Date.now();
-      
+
       // Create timestamps for tabs that don't have one
       // Use current time - new tabs should start as "active"
       let updated = false;
@@ -30,11 +65,11 @@ chrome.tabGroups.onUpdated.addListener((group) => {
           updated = true;
         }
       });
-      
+
       if (updated) {
         await chrome.storage.local.set({ tabLastAccessed });
       }
-      
+
     } catch (error) {
       console.error('Error initializing tab tracking:', error);
     }
@@ -82,6 +117,14 @@ chrome.tabGroups.onUpdated.addListener((group) => {
 
   // Initialize tracking when extension loads
   initializeTabTracking();
+
+  // Set up periodic cleanup every 24 hours
+  chrome.alarms.create('cleanupStaleEntries', { periodInMinutes: 24 * 60 });
+  chrome.alarms.onAlarm.addListener((alarm) => {
+    if (alarm.name === 'cleanupStaleEntries') {
+      cleanupStaleEntries();
+    }
+  });
 
   // Optimize the cache handling in the background script
   let tabAnalyticsCache = null;
