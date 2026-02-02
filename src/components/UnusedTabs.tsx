@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useTabContext } from '../context/TabContext';
+import { useSearchContext } from '../context/SearchContext';
 import { TabDetails } from './TabDetails';
 import { formatTime } from '../utils/formatTime';
 
 export const UnusedTabs: React.FC = () => {
   const { tabs, loading, error, closeTab } = useTabContext();
+  const { searchQuery } = useSearchContext();
   const [selectedTab, setSelectedTab] = useState<number | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -34,8 +36,12 @@ export const UnusedTabs: React.FC = () => {
   }
 
   // Filter tabs for this section - between 5 and 30 days old
+  const searchLower = searchQuery.toLowerCase();
   const recentlyInactiveTabs = (tabs || [])
     .filter(tab => tab.lastAccessed < fiveDaysAgo && tab.lastAccessed >= thirtyDaysAgo)
+    .filter(tab => !searchQuery ||
+      tab.title.toLowerCase().includes(searchLower) ||
+      tab.url.toLowerCase().includes(searchLower))
     .sort((a, b) => a.lastAccessed - b.lastAccessed);
 
   return (

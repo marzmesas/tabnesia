@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useTabContext } from '../context/TabContext';
+import { useSearchContext } from '../context/SearchContext';
 import { TabDetails } from './TabDetails';
 import { getColorVariables } from '../utils/colors';
 
 export const OldTabs: React.FC = () => {
   const { tabs, loading, error, closeTab, closeMultipleTabs } = useTabContext();
+  const { searchQuery } = useSearchContext();
   const [selectedTab, setSelectedTab] = useState<number | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedForClose, setSelectedForClose] = useState<Set<number>>(new Set());
@@ -33,7 +35,12 @@ export const OldTabs: React.FC = () => {
 
   // Filter for tabs older than 30 days
   const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
-  const oldTabs = tabs.filter(tab => tab.lastAccessed < thirtyDaysAgo);
+  const searchLower = searchQuery.toLowerCase();
+  const oldTabs = tabs
+    .filter(tab => tab.lastAccessed < thirtyDaysAgo)
+    .filter(tab => !searchQuery ||
+      tab.title.toLowerCase().includes(searchLower) ||
+      tab.url.toLowerCase().includes(searchLower));
 
   const toggleTabSelection = (tabId: number) => {
     const newSelection = new Set(selectedForClose);

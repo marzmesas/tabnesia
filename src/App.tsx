@@ -4,13 +4,16 @@ import { TabAnalytics } from './components/TabAnalytics';
 import { OldTabs } from './components/OldTabs';
 import { ActiveTabs } from './components/ActiveTabs';
 import { ThemeToggle } from './components/ThemeToggle';
+import { SearchBar } from './components/SearchBar';
 import { ThemeProvider } from './hooks/useTheme';
 import { TabProvider } from './context/TabContext';
+import { SearchProvider } from './context/SearchContext';
 import './styles/index.css';
 
 export const App: React.FC = () => {
   return (
     <TabProvider>
+    <SearchProvider>
     <ThemeProvider>
       <div className="app-container">
         <div className="app-header">
@@ -20,12 +23,14 @@ export const App: React.FC = () => {
           </div>
           <ThemeToggle />
         </div>
+        <SearchBar />
         <TabAnalytics />
         <ActiveTabs />
         <UnusedTabs />
         <OldTabs />
       </div>
     </ThemeProvider>
+    </SearchProvider>
     </TabProvider>
   );
 }; 
