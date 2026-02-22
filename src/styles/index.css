@@ -306,28 +306,6 @@ button:hover {
   background-color: var(--accent-primary);
 }
 
-ul {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-ul::-webkit-scrollbar {
-  width: 8px;
-}
-
-ul::-webkit-scrollbar-track {
-  background: var(--bg-primary);
-  border-radius: 4px;
-}
-
-ul::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 4px;
-}
-
-ul::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
-}
 
 .group-badge {
   display: inline-block;
@@ -417,78 +395,6 @@ ul::-webkit-scrollbar-thumb:hover {
   font-weight: 500;
 }
 
-/* Add these styles for the dropdown functionality */
-.section-container {
-  margin-bottom: 15px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  background: linear-gradient(90deg, 
-    rgba(75, 135, 255, 0.15), 
-    rgba(143, 75, 255, 0.15), 
-    rgba(255, 75, 255, 0.15)
-  );
-  cursor: pointer;
-  user-select: none;
-  transition: background 0.3s ease;
-}
-
-.section-header:hover {
-  background: linear-gradient(90deg, 
-    rgba(75, 135, 255, 0.25), 
-    rgba(143, 75, 255, 0.25), 
-    rgba(255, 75, 255, 0.25)
-  );
-}
-
-.section-header h2 {
-  margin: 0;
-  font-size: 1.1rem;
-  background: linear-gradient(90deg, #4b87ff, #8f4bff, #ff4bff);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-weight: 500;
-}
-
-.section-description {
-  margin: 8px 16px;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  line-height: 1.4;
-  padding-bottom: 4px;
-}
-
-/* Remove or comment out these styles */
-/*
-.dropdown-arrow {
-  font-size: 0.8rem;
-  transition: transform 0.2s ease;
-}
-
-.dropdown-arrow.collapsed {
-  transform: rotate(-90deg);
-}
-*/
-
-/* Remove the debug-info style if you want */
-/*
-.debug-info {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  margin: 0 16px 10px;
-  padding: 4px 8px;
-  background-color: rgba(255, 75, 75, 0.1);
-  border-radius: 4px;
-}
-*/
 
 /* Update the app-header style */
 .app-header {
@@ -518,35 +424,13 @@ ul::-webkit-scrollbar-thumb:hover {
   margin-top: -5px;
 }
 
-/* Add styles for the active tabs section */
-.section-container:nth-child(3) .section-header {
-  background: linear-gradient(90deg, 
-    var(--green-bg-light), 
-    var(--green-bg-light)
-  );
-}
-
-.section-container:nth-child(3) .section-header:hover {
-  background: linear-gradient(90deg, 
-    var(--green-bg-hover), 
-    var(--green-bg-hover)
-  );
-}
-
-.section-container:nth-child(3) .section-header h2 {
-  background: linear-gradient(90deg, var(--green-gradient-start), var(--green-gradient-end));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* Update the stats container to better display four items */
+/* Stats container layout */
 .stats-container {
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
 
-/* Add color coding for the stat values */
+/* Color coding for stat values */
 .stat-item:nth-child(2) .stat-value {
   background: linear-gradient(90deg, var(--green-gradient-start), var(--green-gradient-end));
   -webkit-background-clip: text;
@@ -562,50 +446,6 @@ ul::-webkit-scrollbar-thumb:hover {
 }
 
 .stat-item:nth-child(4) .stat-value {
-  background: linear-gradient(90deg, #ff4b4b, #ff4b87);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* Recently Inactive Tabs - Yellow/Orange gradient */
-.section-container:nth-child(4) .section-header {
-  background: linear-gradient(90deg, 
-    var(--yellow-bg-light), 
-    var(--yellow-bg-light)
-  );
-}
-
-.section-container:nth-child(4) .section-header:hover {
-  background: linear-gradient(90deg, 
-    var(--yellow-bg-hover), 
-    var(--yellow-bg-hover)
-  );
-}
-
-.section-container:nth-child(4) .section-header h2 {
-  background: linear-gradient(90deg, var(--yellow-gradient-start), var(--yellow-gradient-end));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* Forgotten Tabs - Red/Pink gradient */
-.section-container:nth-child(5) .section-header {
-  background: linear-gradient(90deg, 
-    rgba(255, 75, 75, 0.15), 
-    rgba(255, 75, 135, 0.15)
-  );
-}
-
-.section-container:nth-child(5) .section-header:hover {
-  background: linear-gradient(90deg, 
-    rgba(255, 75, 75, 0.25), 
-    rgba(255, 75, 135, 0.25)
-  );
-}
-
-.section-container:nth-child(5) .section-header h2 {
   background: linear-gradient(90deg, #ff4b4b, #ff4b87);
   -webkit-background-clip: text;
   background-clip: text;
@@ -868,4 +708,139 @@ li.selected {
 
 .dialog-confirm:hover {
   background: linear-gradient(90deg, #ff6b6b, #ff6ba7);
+}
+
+/* Section cards — Home view */
+.section-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.section-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.15s;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.section-card:hover {
+  transform: translateY(-1px);
+}
+
+.section-card:active {
+  transform: translateY(0);
+}
+
+.section-card-title {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.section-card-count {
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+/* Active card — green */
+.section-card--active {
+  background: var(--green-bg-light);
+}
+
+.section-card--active:hover {
+  background: var(--green-bg-hover);
+}
+
+.section-card--active .section-card-title,
+.section-card--active .section-card-count {
+  background: linear-gradient(90deg, var(--green-gradient-start), var(--green-gradient-end));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Inactive card — yellow */
+.section-card--inactive {
+  background: var(--yellow-bg-light);
+}
+
+.section-card--inactive:hover {
+  background: var(--yellow-bg-hover);
+}
+
+.section-card--inactive .section-card-title,
+.section-card--inactive .section-card-count {
+  background: linear-gradient(90deg, var(--yellow-gradient-start), var(--yellow-gradient-end));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Forgotten card — red */
+.section-card--forgotten {
+  background: rgba(255, 75, 75, 0.15);
+}
+
+.section-card--forgotten:hover {
+  background: rgba(255, 75, 75, 0.25);
+}
+
+.section-card--forgotten .section-card-title,
+.section-card--forgotten .section-card-count {
+  background: linear-gradient(90deg, #ff4b4b, #ff4b87);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Section view — drill-down */
+.section-view {
+  display: flex;
+  flex-direction: column;
+}
+
+.back-icon-button {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  margin-bottom: 8px;
+  border-radius: 50%;
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  min-width: auto;
+  transition: all 0.2s;
+}
+
+.back-icon-button:hover {
+  color: var(--text-primary);
+  background-color: var(--border-color);
+  transform: translateX(-2px);
+}
+
+.section-view-title {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.section-view-search {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--bg-primary);
+  padding-bottom: 4px;
 } 
