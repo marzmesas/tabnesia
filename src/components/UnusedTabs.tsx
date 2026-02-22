@@ -3,22 +3,22 @@ import { useTabContext } from '../context/TabContext';
 import { useSearchContext } from '../context/SearchContext';
 import { TabDetails } from './TabDetails';
 import { formatTime } from '../utils/formatTime';
+import { ACTIVE_THRESHOLD_MS, FORGOTTEN_THRESHOLD_MS } from '../utils/constants';
 
 export const UnusedTabs: React.FC = () => {
   const { tabs, loading, error, closeTab } = useTabContext();
   const { searchQuery } = useSearchContext();
   const [selectedTab, setSelectedTab] = useState<number | null>(null);
-  const [isExpanded, setIsExpanded] = useState(false);
 
   // Define time thresholds
-  const fiveDaysAgo = Date.now() - (5 * 24 * 60 * 60 * 1000);
-  const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+  const fiveDaysAgo = Date.now() - ACTIVE_THRESHOLD_MS;
+  const thirtyDaysAgo = Date.now() - FORGOTTEN_THRESHOLD_MS;
 
   if (error) {
     return <div>Error: {error}</div>;
   }
 
-  const selectedTabData = selectedTab !== null 
+  const selectedTabData = selectedTab !== null
     ? tabs.find(tab => tab.id === selectedTab)
     : null;
 
@@ -42,43 +42,31 @@ export const UnusedTabs: React.FC = () => {
     .filter(tab => !searchQuery ||
       tab.title.toLowerCase().includes(searchLower) ||
       tab.url.toLowerCase().includes(searchLower))
-    .sort((a, b) => b.lastAccessed - a.lastAccessed); // Most recent first (consistent with other sections)
+    .sort((a, b) => b.lastAccessed - a.lastAccessed);
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Loading tab data...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="section-container">
-      <div 
-        className="section-header" 
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
-        <h2>Recently Inactive Tabs</h2>
-      </div>
-      <p className="section-description">
-        Tabs you last visited between 5 and 30 days ago. You might still remember what they are!
-      </p>
-      
-      {isExpanded && (
-        loading ? (
-          <div className="loading-container">
-            <div className="loading-spinner"></div>
-            <p>Loading tab data...</p>
+    <ul>
+      {recentlyInactiveTabs.map(tab => (
+        <li key={tab.id}>
+          <div className="tab-list-item">
+            <span className="tab-title">{tab.title}</span>
+            <span className="tab-time">{formatTime(tab.lastAccessed)}</span>
           </div>
-        ) : (
-          <ul>
-            {recentlyInactiveTabs.map(tab => (
-              <li key={tab.id}>
-                <div className="tab-list-item">
-                  <span className="tab-title">{tab.title}</span>
-                  <span className="tab-time">{formatTime(tab.lastAccessed)}</span>
-                </div>
-                <button onClick={() => setSelectedTab(tab.id)}>Details</button>
-              </li>
-            ))}
-            {recentlyInactiveTabs.length === 0 && (
-              <p>No recently inactive tabs found</p>
-            )}
-          </ul>
-        )
+          <button onClick={() => setSelectedTab(tab.id)}>Details</button>
+        </li>
+      ))}
+      {recentlyInactiveTabs.length === 0 && (
+        <p>No recently inactive tabs found</p>
       )}
-    </div>
+    </ul>
   );
-}; 
+};

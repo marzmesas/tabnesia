@@ -4,12 +4,12 @@ import { useSearchContext } from '../context/SearchContext';
 import { TabDetails } from './TabDetails';
 import { ConfirmDialog } from './ConfirmDialog';
 import { getColorVariables } from '../utils/colors';
+import { FORGOTTEN_THRESHOLD_MS } from '../utils/constants';
 
 export const OldTabs: React.FC = () => {
   const { tabs, loading, error, closeTab, closeMultipleTabs } = useTabContext();
   const { searchQuery } = useSearchContext();
   const [selectedTab, setSelectedTab] = useState<number | null>(null);
-  const [isExpanded, setIsExpanded] = useState(false);
   const [selectedForClose, setSelectedForClose] = useState<Set<number>>(new Set());
   const [isClosing, setIsClosing] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState<{
@@ -40,7 +40,7 @@ export const OldTabs: React.FC = () => {
   }
 
   // Filter for tabs older than 30 days
-  const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+  const thirtyDaysAgo = Date.now() - FORGOTTEN_THRESHOLD_MS;
   const searchLower = searchQuery.toLowerCase();
   const oldTabs = tabs
     .filter(tab => tab.lastAccessed < thirtyDaysAgo)
@@ -103,8 +103,21 @@ export const OldTabs: React.FC = () => {
     setConfirmDialog({ ...confirmDialog, isOpen: false });
   };
 
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Loading tab data...</p>
+      </div>
+    );
+  }
+
+  if (oldTabs.length === 0) {
+    return <p>No forgotten tabs found</p>;
+  }
+
   return (
-    <div className="section-container">
+    <>
       <ConfirmDialog
         isOpen={confirmDialog.isOpen}
         title={confirmDialog.type === 'all' ? 'Close All Tabs?' : 'Close Selected Tabs?'}
@@ -115,94 +128,69 @@ export const OldTabs: React.FC = () => {
         onCancel={handleCancelClose}
       />
 
-      <div
-        className="section-header"
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
-        <h2>Forgotten Tabs</h2>
+      <div className="batch-actions">
+        <div className="selection-buttons">
+          <button
+            className="select-btn"
+            onClick={selectAll}
+            disabled={isClosing}
+          >
+            Select All
+          </button>
+          <button
+            className="select-btn"
+            onClick={selectNone}
+            disabled={isClosing || selectedForClose.size === 0}
+          >
+            Clear
+          </button>
+        </div>
+        <div className="close-buttons">
+          <button
+            className="close-selected-btn"
+            onClick={handleCloseSelectedClick}
+            disabled={isClosing || selectedForClose.size === 0}
+          >
+            {isClosing ? 'Closing...' : `Close Selected (${selectedForClose.size})`}
+          </button>
+          <button
+            className="close-all-btn"
+            onClick={handleCloseAllClick}
+            disabled={isClosing}
+          >
+            Close All ({oldTabs.length})
+          </button>
+        </div>
       </div>
-      <p className="section-description">
-        Tabs that you have not opened for more than 30 days. Maybe it's time to let go...
-      </p>
-
-      {isExpanded && (
-        loading ? (
-          <div className="loading-container">
-            <div className="loading-spinner"></div>
-            <p>Loading tab data...</p>
-          </div>
-        ) : (
-          oldTabs.length === 0 ? (
-            <p>No forgotten tabs found</p>
-          ) : (
-            <>
-              <div className="batch-actions">
-                <div className="selection-buttons">
-                  <button
-                    className="select-btn"
-                    onClick={selectAll}
-                    disabled={isClosing}
-                  >
-                    Select All
-                  </button>
-                  <button
-                    className="select-btn"
-                    onClick={selectNone}
-                    disabled={isClosing || selectedForClose.size === 0}
-                  >
-                    Clear
-                  </button>
-                </div>
-                <div className="close-buttons">
-                  <button
-                    className="close-selected-btn"
-                    onClick={handleCloseSelectedClick}
-                    disabled={isClosing || selectedForClose.size === 0}
-                  >
-                    {isClosing ? 'Closing...' : `Close Selected (${selectedForClose.size})`}
-                  </button>
-                  <button
-                    className="close-all-btn"
-                    onClick={handleCloseAllClick}
-                    disabled={isClosing}
-                  >
-                    Close All ({oldTabs.length})
-                  </button>
-                </div>
-              </div>
-              <ul>
-                {oldTabs.map(tab => (
-                  <li key={tab.id} className={selectedForClose.has(tab.id) ? 'selected' : ''}>
-                    <div className="tab-list-item">
-                      <label className="checkbox-container">
-                        <input
-                          type="checkbox"
-                          checked={selectedForClose.has(tab.id)}
-                          onChange={() => toggleTabSelection(tab.id)}
-                          disabled={isClosing}
-                        />
-                        <span className="checkmark"></span>
-                      </label>
-                      <span className="tab-title">{tab.title}</span>
-                      {tab.groupDetails && (
-                        <span
-                          className="tab-group-indicator"
-                          style={{
-                            backgroundColor: getColorVariables(tab.groupDetails.color).bg
-                          }}
-                        >
-                          {tab.groupDetails.name}
-                        </span>
-                      )}
-                    </div>
-                    <button onClick={() => setSelectedTab(tab.id)}>Details</button>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )
-        )
-      )}
-    </div>
+      <ul>
+        {oldTabs.map(tab => (
+          <li key={tab.id} className={selectedForClose.has(tab.id) ? 'selected' : ''}>
+            <div className="tab-list-item">
+              <label className="checkbox-container">
+                <input
+                  type="checkbox"
+                  checked={selectedForClose.has(tab.id)}
+                  onChange={() => toggleTabSelection(tab.id)}
+                  disabled={isClosing}
+                />
+                <span className="checkmark"></span>
+              </label>
+              <span className="tab-title">{tab.title}</span>
+              {tab.groupDetails && (
+                <span
+                  className="tab-group-indicator"
+                  style={{
+                    backgroundColor: getColorVariables(tab.groupDetails.color).bg
+                  }}
+                >
+                  {tab.groupDetails.name}
+                </span>
+              )}
+            </div>
+            <button onClick={() => setSelectedTab(tab.id)}>Details</button>
+          </li>
+        ))}
+      </ul>
+    </>
   );
 };
