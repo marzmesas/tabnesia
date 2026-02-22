@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTabContext } from '../context/TabContext';
 import { useSearchContext } from '../context/SearchContext';
 import { TabDetails } from './TabDetails';
@@ -6,7 +6,11 @@ import { ConfirmDialog } from './ConfirmDialog';
 import { getColorVariables } from '../utils/colors';
 import { FORGOTTEN_THRESHOLD_MS } from '../utils/constants';
 
-export const OldTabs: React.FC = () => {
+interface OldTabsProps {
+  onDetailView: (showing: boolean) => void;
+}
+
+export const OldTabs: React.FC<OldTabsProps> = ({ onDetailView }) => {
   const { tabs, loading, error, closeTab, closeMultipleTabs } = useTabContext();
   const { searchQuery } = useSearchContext();
   const [selectedTab, setSelectedTab] = useState<number | null>(null);
@@ -17,6 +21,9 @@ export const OldTabs: React.FC = () => {
     type: 'selected' | 'all';
     count: number;
   }>({ isOpen: false, type: 'selected', count: 0 });
+
+  const isDetail = selectedTab !== null && tabs.some(tab => tab.id === selectedTab);
+  useEffect(() => { onDetailView(isDetail); }, [isDetail, onDetailView]);
 
   if (error) {
     return <div>Error: {error}</div>;

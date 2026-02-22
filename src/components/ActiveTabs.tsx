@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTabContext } from '../context/TabContext';
 import { useSearchContext } from '../context/SearchContext';
 import { TabDetails } from './TabDetails';
 import { formatTime } from '../utils/formatTime';
 import { ACTIVE_THRESHOLD_MS } from '../utils/constants';
 
-export const ActiveTabs: React.FC = () => {
+interface ActiveTabsProps {
+  onDetailView: (showing: boolean) => void;
+}
+
+export const ActiveTabs: React.FC<ActiveTabsProps> = ({ onDetailView }) => {
   const { tabs, loading, error, closeTab } = useTabContext();
   const { searchQuery } = useSearchContext();
   const [selectedTab, setSelectedTab] = useState<number | null>(null);
+
+  const isDetail = selectedTab !== null && tabs.some(tab => tab.id === selectedTab);
+  useEffect(() => { onDetailView(isDetail); }, [isDetail, onDetailView]);
 
   // Define time threshold
   const fiveDaysAgo = Date.now() - ACTIVE_THRESHOLD_MS;
