@@ -7,6 +7,31 @@ chrome.tabGroups.onUpdated.addListener((group) => {
     // Tab group removed - future feature hook
   });
   
+  // Time threshold constants (must match src/utils/constants.ts)
+  const FORGOTTEN_THRESHOLD_MS = 30 * 24 * 60 * 60 * 1000;
+  const STALE_CLEANUP_MS = 90 * 24 * 60 * 60 * 1000;
+
+  // Update the extension badge with the count of forgotten tabs
+  const updateBadge = async () => {
+    try {
+      const tabs = await chrome.tabs.query({});
+      const forgottenCutoff = Date.now() - FORGOTTEN_THRESHOLD_MS;
+      let forgottenCount = 0;
+
+      for (const tab of tabs) {
+        const lastAccessed = tabLastAccessed[tab.id];
+        if (lastAccessed && lastAccessed < forgottenCutoff) {
+          forgottenCount++;
+        }
+      }
+
+      await chrome.action.setBadgeText({ text: forgottenCount > 0 ? String(forgottenCount) : '' });
+      await chrome.action.setBadgeBackgroundColor({ color: '#E53935' });
+    } catch (error) {
+      console.error('Error updating badge:', error);
+    }
+  };
+
   // Use a more robust approach to track tab access times
   let tabLastAccessed = {};
 
@@ -15,7 +40,7 @@ chrome.tabGroups.onUpdated.addListener((group) => {
     try {
       const tabs = await chrome.tabs.query({});
       const currentTabIds = new Set(tabs.map(tab => tab.id));
-      const ninetyDaysAgo = Date.now() - (90 * 24 * 60 * 60 * 1000);
+      const ninetyDaysAgo = Date.now() - STALE_CLEANUP_MS;
 
       let cleaned = false;
       const entriesToDelete = [];
@@ -37,6 +62,8 @@ chrome.tabGroups.onUpdated.addListener((group) => {
       if (cleaned) {
         await chrome.storage.local.set({ tabLastAccessed });
       }
+
+      await updateBadge();
     } catch (error) {
       console.error('Error cleaning up stale entries:', error);
     }
@@ -69,6 +96,8 @@ chrome.tabGroups.onUpdated.addListener((group) => {
       if (updated) {
         await chrome.storage.local.set({ tabLastAccessed });
       }
+
+      await updateBadge();
 
     } catch (error) {
       console.error('Error initializing tab tracking:', error);
@@ -217,8 +246,9 @@ chrome.tabGroups.onUpdated.addListener((group) => {
           // Update the cache
           tabAnalyticsCache = results;
           lastCacheTime = now;
-          
+
           sendResponse(results);
+          updateBadge();
         } catch (error) {
           console.error('Error processing tabs:', error);
           sendResponse([]);

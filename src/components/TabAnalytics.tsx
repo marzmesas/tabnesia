@@ -1,12 +1,13 @@
 import React from 'react';
 import { useTabContext } from '../context/TabContext';
+import { ACTIVE_THRESHOLD_MS, FORGOTTEN_THRESHOLD_MS } from '../utils/constants';
 
 export const TabAnalytics: React.FC = () => {
   const { tabs, loading, error } = useTabContext();
 
   // Define time thresholds
-  const fiveDaysAgo = Date.now() - (5 * 24 * 60 * 60 * 1000);
-  const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+  const fiveDaysAgo = Date.now() - ACTIVE_THRESHOLD_MS;
+  const thirtyDaysAgo = Date.now() - FORGOTTEN_THRESHOLD_MS;
   
   // Categorize tabs
   const activeTabs = tabs.filter(tab => tab.lastAccessed >= fiveDaysAgo);
