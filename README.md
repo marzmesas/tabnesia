@@ -1,5 +1,11 @@
 # Tabnesia
 
+![Version](https://img.shields.io/badge/version-1.1-blue)
+![License](https://img.shields.io/badge/license-ISC-green)
+![Chrome Manifest](https://img.shields.io/badge/manifest-v3-orange)
+![React](https://img.shields.io/badge/react-19-61DAFB?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/typescript-5.8-3178C6?logo=typescript&logoColor=white)
+
 Tabnesia is a Chrome extension that helps you manage your browser tabs by tracking tab usage and identifying forgotten tabs.
 
 ## Features
