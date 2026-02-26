@@ -64,7 +64,10 @@ export const ActiveTabs: React.FC<ActiveTabsProps> = ({ onDetailView }) => {
       {activeTabs.map(tab => (
         <li key={tab.id}>
           <div className="tab-list-item">
-            <span className="tab-title">{tab.title}</span>
+            <span className="tab-title">
+              {tab.title}
+              {tab.discarded && <span className="discarded-badge">Discarded</span>}
+            </span>
             <span className="tab-time">{formatTime(tab.lastAccessed)}</span>
           </div>
           <button onClick={() => setSelectedTab(tab.id)}>Details</button>

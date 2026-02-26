@@ -239,7 +239,9 @@ chrome.tabGroups.onUpdated.addListener((group) => {
               url: tab.url,
               title: tab.title,
               groupId: tab.groupId,
-              lastAccessed: lastVisitTime
+              lastAccessed: lastVisitTime,
+              discarded: tab.discarded || false,
+              active: tab.active || false
             };
           });
           

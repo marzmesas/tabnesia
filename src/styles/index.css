@@ -27,6 +27,12 @@
   --green-bg-hover: rgba(0, 163, 82, 0.25);
   --yellow-bg-light: rgba(214, 140, 0, 0.15);
   --yellow-bg-hover: rgba(214, 140, 0, 0.25);
+
+  /* Blue (duplicates) */
+  --blue-gradient-start: #0077cc;
+  --blue-gradient-end: #0099ff;
+  --blue-bg-light: rgba(0, 119, 204, 0.15);
+  --blue-bg-hover: rgba(0, 119, 204, 0.25);
 }
 
 /* Dark theme variables remain the same as root */
@@ -48,6 +54,12 @@
   --green-bg-hover: rgba(75, 255, 135, 0.25);
   --yellow-bg-light: rgba(255, 191, 75, 0.15);
   --yellow-bg-hover: rgba(255, 191, 75, 0.25);
+
+  /* Blue (duplicates) */
+  --blue-gradient-start: #4bb3ff;
+  --blue-gradient-end: #4bd4ff;
+  --blue-bg-light: rgba(75, 179, 255, 0.15);
+  --blue-bg-hover: rgba(75, 179, 255, 0.25);
 }
 
 /* Theme toggle styles */
@@ -843,4 +855,262 @@ li.selected {
   z-index: 10;
   background-color: var(--bg-primary);
   padding-bottom: 4px;
-} 
+}
+
+/* Duplicates card — blue */
+.section-card--duplicates {
+  background: var(--blue-bg-light);
+}
+
+.section-card--duplicates:hover {
+  background: var(--blue-bg-hover);
+}
+
+.section-card--duplicates .section-card-title,
+.section-card--duplicates .section-card-count {
+  background: linear-gradient(90deg, var(--blue-gradient-start), var(--blue-gradient-end));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Duplicates stat — blue, full-width span */
+.stat-item--duplicates {
+  grid-column: 1 / -1;
+}
+
+.stat-item--duplicates .stat-value {
+  background: linear-gradient(90deg, var(--blue-gradient-start), var(--blue-gradient-end));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Duplicate groups */
+.duplicate-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.duplicate-group {
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.duplicate-group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text-primary);
+  min-width: auto;
+  transition: background-color 0.2s;
+}
+
+.duplicate-group-header:hover {
+  background-color: rgba(99, 102, 241, 0.1);
+  transform: none;
+}
+
+.duplicate-group-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  margin-right: 10px;
+}
+
+.duplicate-group-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.duplicate-group-url {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.duplicate-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  flex-shrink: 0;
+  background: linear-gradient(90deg, var(--blue-gradient-start), var(--blue-gradient-end));
+  color: white;
+}
+
+.duplicate-group-expanded {
+  border-top: 1px solid var(--border-color);
+}
+
+.duplicate-group-expanded ul {
+  border-radius: 0;
+}
+
+.close-group-duplicates-btn {
+  width: 100%;
+  padding: 8px;
+  font-size: 0.85rem;
+  border-radius: 0;
+  background: linear-gradient(90deg, var(--blue-gradient-start), var(--blue-gradient-end));
+  border-top: 1px solid var(--border-color);
+}
+
+.close-group-duplicates-btn:hover {
+  opacity: 0.9;
+  transform: none;
+}
+
+.close-all-duplicates-btn {
+  background: linear-gradient(90deg, var(--blue-gradient-start), var(--blue-gradient-end));
+}
+
+.close-all-duplicates-btn:hover {
+  opacity: 0.9;
+}
+
+.keeper-badge {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-right: 6px;
+  background: linear-gradient(90deg, var(--green-gradient-start), var(--green-gradient-end));
+  color: white;
+  vertical-align: middle;
+}
+
+/* Discarded badge */
+.discarded-badge {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  margin-left: 6px;
+  background-color: var(--border-color);
+  color: var(--text-secondary);
+  vertical-align: middle;
+}
+
+/* Status badges in TabDetails */
+.status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.status-badge--active {
+  background: linear-gradient(90deg, var(--green-gradient-start), var(--green-gradient-end));
+  color: white;
+}
+
+.status-badge--loaded {
+  background-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.status-badge--discarded {
+  background-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+/* Tab details actions */
+.tab-details-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.tab-details-actions .close-button {
+  margin-top: 0;
+}
+
+/* Discard button — outline style */
+.discard-button {
+  width: 100%;
+  padding: 12px;
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.discard-button:hover:not(:disabled) {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+}
+
+.discard-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.discard-button:disabled:hover {
+  transform: none;
+  background-color: transparent;
+}
+
+/* Batch discard buttons */
+.discard-selected-btn {
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.discard-selected-btn:hover:not(:disabled) {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+}
+
+.discard-selected-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.discard-all-btn {
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.discard-all-btn:hover:not(:disabled) {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+}
+
+.discard-all-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

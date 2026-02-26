@@ -6,6 +6,8 @@ export interface TabAnalytics {
   title: string;
   groupId: number;
   lastAccessed: number;
+  discarded: boolean;
+  active: boolean;
   groupDetails?: {
     name: string;
     color: string;
@@ -18,6 +20,8 @@ interface TabResponse {
   title: string;
   groupId: number;
   lastAccessed: number;
+  discarded: boolean;
+  active: boolean;
 }
 
 interface TabContextValue {
@@ -26,6 +30,8 @@ interface TabContextValue {
   error: string | null;
   closeTab: (tabId: number) => Promise<void>;
   closeMultipleTabs: (tabIds: number[]) => Promise<void>;
+  discardTab: (tabId: number) => Promise<void>;
+  discardMultipleTabs: (tabIds: number[]) => Promise<void>;
   refreshData: () => Promise<void>;
 }
 
@@ -61,7 +67,9 @@ export const TabProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         newTabs.some((tab: TabAnalytics, i: number) =>
           !tabsRef.current[i] ||
           tab.id !== tabsRef.current[i].id ||
-          tab.lastAccessed !== tabsRef.current[i].lastAccessed
+          tab.lastAccessed !== tabsRef.current[i].lastAccessed ||
+          tab.discarded !== tabsRef.current[i].discarded ||
+          tab.active !== tabsRef.current[i].active
         );
 
       if (hasChanged) {
@@ -117,8 +125,37 @@ export const TabProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  const discardTab = async (tabId: number) => {
+    try {
+      await chrome.tabs.discard(tabId);
+      // Optimistic update
+      const updatedTabs = tabs.map(tab =>
+        tab.id === tabId ? { ...tab, discarded: true } : tab
+      );
+      tabsRef.current = updatedTabs;
+      setTabs(updatedTabs);
+    } catch (err) {
+      console.error('Failed to discard tab:', err);
+    }
+  };
+
+  const discardMultipleTabs = async (tabIds: number[]) => {
+    try {
+      await Promise.all(tabIds.map(id => chrome.tabs.discard(id)));
+      // Optimistic update
+      const idSet = new Set(tabIds);
+      const updatedTabs = tabs.map(tab =>
+        idSet.has(tab.id) ? { ...tab, discarded: true } : tab
+      );
+      tabsRef.current = updatedTabs;
+      setTabs(updatedTabs);
+    } catch (err) {
+      console.error('Failed to discard tabs:', err);
+    }
+  };
+
   return (
-    <TabContext.Provider value={{ tabs, loading, error, closeTab, closeMultipleTabs, refreshData: () => fetchAnalytics(false) }}>
+    <TabContext.Provider value={{ tabs, loading, error, closeTab, closeMultipleTabs, discardTab, discardMultipleTabs, refreshData: () => fetchAnalytics(false) }}>
       {children}
     </TabContext.Provider>
   );

@@ -11,14 +11,15 @@ interface OldTabsProps {
 }
 
 export const OldTabs: React.FC<OldTabsProps> = ({ onDetailView }) => {
-  const { tabs, loading, error, closeTab, closeMultipleTabs } = useTabContext();
+  const { tabs, loading, error, closeTab, closeMultipleTabs, discardMultipleTabs } = useTabContext();
   const { searchQuery } = useSearchContext();
   const [selectedTab, setSelectedTab] = useState<number | null>(null);
   const [selectedForClose, setSelectedForClose] = useState<Set<number>>(new Set());
   const [isClosing, setIsClosing] = useState(false);
+  const [isDiscarding, setIsDiscarding] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
-    type: 'selected' | 'all';
+    type: 'selected' | 'all' | 'discard-selected' | 'discard-all';
     count: number;
   }>({ isOpen: false, type: 'selected', count: 0 });
 
@@ -92,22 +93,76 @@ export const OldTabs: React.FC<OldTabsProps> = ({ onDetailView }) => {
     });
   };
 
-  const handleConfirmClose = async () => {
+  const handleDiscardSelectedClick = () => {
+    const discardable = oldTabs.filter(
+      tab => selectedForClose.has(tab.id) && !tab.active && !tab.discarded
+    );
+    if (discardable.length === 0) return;
+    setConfirmDialog({
+      isOpen: true,
+      type: 'discard-selected',
+      count: discardable.length,
+    });
+  };
+
+  const handleDiscardAllClick = () => {
+    const discardable = oldTabs.filter(tab => !tab.active && !tab.discarded);
+    if (discardable.length === 0) return;
+    setConfirmDialog({
+      isOpen: true,
+      type: 'discard-all',
+      count: discardable.length,
+    });
+  };
+
+  const handleConfirmAction = async () => {
+    const dialogType = confirmDialog.type;
     setConfirmDialog({ ...confirmDialog, isOpen: false });
-    setIsClosing(true);
 
-    if (confirmDialog.type === 'selected') {
+    if (dialogType === 'selected') {
+      setIsClosing(true);
       await closeMultipleTabs(Array.from(selectedForClose));
-    } else {
+      setSelectedForClose(new Set());
+      setIsClosing(false);
+    } else if (dialogType === 'all') {
+      setIsClosing(true);
       await closeMultipleTabs(oldTabs.map(tab => tab.id));
+      setSelectedForClose(new Set());
+      setIsClosing(false);
+    } else if (dialogType === 'discard-selected') {
+      setIsDiscarding(true);
+      const discardable = oldTabs.filter(
+        tab => selectedForClose.has(tab.id) && !tab.active && !tab.discarded
+      );
+      await discardMultipleTabs(discardable.map(tab => tab.id));
+      setIsDiscarding(false);
+    } else if (dialogType === 'discard-all') {
+      setIsDiscarding(true);
+      const discardable = oldTabs.filter(tab => !tab.active && !tab.discarded);
+      await discardMultipleTabs(discardable.map(tab => tab.id));
+      setIsDiscarding(false);
     }
-
-    setSelectedForClose(new Set());
-    setIsClosing(false);
   };
 
   const handleCancelClose = () => {
     setConfirmDialog({ ...confirmDialog, isOpen: false });
+  };
+
+  const getConfirmTitle = () => {
+    switch (confirmDialog.type) {
+      case 'selected': return 'Close Selected Tabs?';
+      case 'all': return 'Close All Tabs?';
+      case 'discard-selected': return 'Discard Selected Tabs?';
+      case 'discard-all': return 'Discard All Tabs?';
+    }
+  };
+
+  const getConfirmMessage = () => {
+    const isDiscard = confirmDialog.type.startsWith('discard');
+    if (isDiscard) {
+      return `Are you sure you want to discard ${confirmDialog.count} tab${confirmDialog.count > 1 ? 's' : ''}? They will stay open but free up memory.`;
+    }
+    return `Are you sure you want to close ${confirmDialog.count} tab${confirmDialog.count > 1 ? 's' : ''}? This action cannot be undone.`;
   };
 
   if (loading) {
@@ -123,15 +178,21 @@ export const OldTabs: React.FC<OldTabsProps> = ({ onDetailView }) => {
     return <p>No forgotten tabs found</p>;
   }
 
+  const isBusy = isClosing || isDiscarding;
+  const discardableSelectedCount = oldTabs.filter(
+    tab => selectedForClose.has(tab.id) && !tab.active && !tab.discarded
+  ).length;
+  const discardableAllCount = oldTabs.filter(tab => !tab.active && !tab.discarded).length;
+
   return (
     <>
       <ConfirmDialog
         isOpen={confirmDialog.isOpen}
-        title={confirmDialog.type === 'all' ? 'Close All Tabs?' : 'Close Selected Tabs?'}
-        message={`Are you sure you want to close ${confirmDialog.count} tab${confirmDialog.count > 1 ? 's' : ''}? This action cannot be undone.`}
-        confirmLabel="Close"
+        title={getConfirmTitle()}
+        message={getConfirmMessage()}
+        confirmLabel={confirmDialog.type.startsWith('discard') ? 'Discard' : 'Close'}
         cancelLabel="Cancel"
-        onConfirm={handleConfirmClose}
+        onConfirm={handleConfirmAction}
         onCancel={handleCancelClose}
       />
 
@@ -140,14 +201,14 @@ export const OldTabs: React.FC<OldTabsProps> = ({ onDetailView }) => {
           <button
             className="select-btn"
             onClick={selectAll}
-            disabled={isClosing}
+            disabled={isBusy}
           >
             Select All
           </button>
           <button
             className="select-btn"
             onClick={selectNone}
-            disabled={isClosing || selectedForClose.size === 0}
+            disabled={isBusy || selectedForClose.size === 0}
           >
             Clear
           </button>
@@ -156,16 +217,32 @@ export const OldTabs: React.FC<OldTabsProps> = ({ onDetailView }) => {
           <button
             className="close-selected-btn"
             onClick={handleCloseSelectedClick}
-            disabled={isClosing || selectedForClose.size === 0}
+            disabled={isBusy || selectedForClose.size === 0}
           >
             {isClosing ? 'Closing...' : `Close Selected (${selectedForClose.size})`}
           </button>
           <button
             className="close-all-btn"
             onClick={handleCloseAllClick}
-            disabled={isClosing}
+            disabled={isBusy}
           >
             Close All ({oldTabs.length})
+          </button>
+        </div>
+        <div className="close-buttons">
+          <button
+            className="discard-selected-btn"
+            onClick={handleDiscardSelectedClick}
+            disabled={isBusy || discardableSelectedCount === 0}
+          >
+            {isDiscarding ? 'Discarding...' : `Discard Selected (${discardableSelectedCount})`}
+          </button>
+          <button
+            className="discard-all-btn"
+            onClick={handleDiscardAllClick}
+            disabled={isBusy || discardableAllCount === 0}
+          >
+            Discard All ({discardableAllCount})
           </button>
         </div>
       </div>
@@ -178,11 +255,14 @@ export const OldTabs: React.FC<OldTabsProps> = ({ onDetailView }) => {
                   type="checkbox"
                   checked={selectedForClose.has(tab.id)}
                   onChange={() => toggleTabSelection(tab.id)}
-                  disabled={isClosing}
+                  disabled={isBusy}
                 />
                 <span className="checkmark"></span>
               </label>
-              <span className="tab-title">{tab.title}</span>
+              <span className="tab-title">
+                {tab.title}
+                {tab.discarded && <span className="discarded-badge">Discarded</span>}
+              </span>
               {tab.groupDetails && (
                 <span
                   className="tab-group-indicator"

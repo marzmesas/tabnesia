@@ -4,8 +4,9 @@ import { SearchBar } from './SearchBar';
 import { ActiveTabs } from './ActiveTabs';
 import { UnusedTabs } from './UnusedTabs';
 import { OldTabs } from './OldTabs';
+import { DuplicateTabs } from './DuplicateTabs';
 
-type Section = 'active' | 'inactive' | 'forgotten';
+type Section = 'active' | 'inactive' | 'forgotten' | 'duplicates';
 
 interface SectionViewProps {
   section: Section;
@@ -16,6 +17,7 @@ const sectionTitles: Record<Section, string> = {
   active: 'Active Tabs',
   inactive: 'Recently Inactive',
   forgotten: 'Forgotten Tabs',
+  duplicates: 'Duplicate Tabs',
 };
 
 export const SectionView: React.FC<SectionViewProps> = ({ section, onBack }) => {
@@ -64,6 +66,7 @@ export const SectionView: React.FC<SectionViewProps> = ({ section, onBack }) => 
       {section === 'active' && <ActiveTabs onDetailView={setShowingDetail} />}
       {section === 'inactive' && <UnusedTabs onDetailView={setShowingDetail} />}
       {section === 'forgotten' && <OldTabs onDetailView={setShowingDetail} />}
+      {section === 'duplicates' && <DuplicateTabs onDetailView={setShowingDetail} />}
     </div>
   );
 };

@@ -6,7 +6,7 @@ import { TabProvider } from './context/TabContext';
 import { SearchProvider } from './context/SearchContext';
 import './styles/index.css';
 
-type View = 'home' | 'active' | 'inactive' | 'forgotten';
+type View = 'home' | 'active' | 'inactive' | 'forgotten' | 'duplicates';
 
 export const App: React.FC = () => {
   const [activeView, setActiveView] = useState<View>('home');

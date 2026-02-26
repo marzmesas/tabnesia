@@ -3,8 +3,9 @@ import { useTabContext } from '../context/TabContext';
 import { ThemeToggle } from './ThemeToggle';
 import { TabAnalytics } from './TabAnalytics';
 import { ACTIVE_THRESHOLD_MS, FORGOTTEN_THRESHOLD_MS } from '../utils/constants';
+import { findDuplicates } from '../utils/urlUtils';
 
-type Section = 'active' | 'inactive' | 'forgotten';
+type Section = 'active' | 'inactive' | 'forgotten' | 'duplicates';
 
 interface HomeViewProps {
   onNavigate: (section: Section) => void;
@@ -19,6 +20,11 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
     tab.lastAccessed < now - ACTIVE_THRESHOLD_MS && tab.lastAccessed >= now - FORGOTTEN_THRESHOLD_MS
   ).length;
   const forgottenCount = tabs.filter(tab => tab.lastAccessed < now - FORGOTTEN_THRESHOLD_MS).length;
+
+  const duplicateGroups = findDuplicates(tabs);
+  const duplicateCount = duplicateGroups.reduce(
+    (sum, group) => sum + group.tabs.length - 1, 0
+  );
 
   return (
     <>
@@ -43,6 +49,12 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
           <span className="section-card-title">Forgotten Tabs</span>
           <span className="section-card-count">{forgottenCount}</span>
         </button>
+        {duplicateCount > 0 && (
+          <button className="section-card section-card--duplicates" onClick={() => onNavigate('duplicates')}>
+            <span className="section-card-title">Duplicate Tabs</span>
+            <span className="section-card-count">{duplicateCount}</span>
+          </button>
+        )}
       </div>
     </>
   );

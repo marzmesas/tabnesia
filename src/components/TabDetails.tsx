@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { TabAnalytics } from '../context/TabContext';
+import { useTabContext } from '../context/TabContext';
 import { GroupBadge } from './GroupBadge';
 import { ConfirmDialog } from './ConfirmDialog';
 
@@ -10,6 +11,7 @@ interface TabDetailsProps {
 }
 
 export const TabDetails: React.FC<TabDetailsProps> = ({ tab, onClose, onBack }) => {
+  const { discardTab } = useTabContext();
   const [timestamp] = useState(tab.lastAccessed);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -45,6 +47,18 @@ export const TabDetails: React.FC<TabDetailsProps> = ({ tab, onClose, onBack }) 
     onClose(tab.id);
   };
 
+  const getStatusLabel = () => {
+    if (tab.discarded) return 'Discarded';
+    if (tab.active) return 'Active';
+    return 'Loaded';
+  };
+
+  const getStatusClass = () => {
+    if (tab.discarded) return 'status-badge--discarded';
+    if (tab.active) return 'status-badge--active';
+    return 'status-badge--loaded';
+  };
+
   return (
     <div className="tab-details">
       <ConfirmDialog
@@ -60,6 +74,12 @@ export const TabDetails: React.FC<TabDetailsProps> = ({ tab, onClose, onBack }) 
       <button className="back-button" onClick={onBack}>← Back</button>
       <h2>{tab.title}</h2>
       <div className="details-container">
+        <div className="detail-item">
+          <span className="detail-label">Status</span>
+          <span className="detail-value">
+            <span className={`status-badge ${getStatusClass()}`}>{getStatusLabel()}</span>
+          </span>
+        </div>
         <div className="detail-item">
           <span className="detail-label">Group</span>
           <span className="detail-value">
@@ -82,9 +102,18 @@ export const TabDetails: React.FC<TabDetailsProps> = ({ tab, onClose, onBack }) 
           <span className="detail-value url">{tab.url}</span>
         </div>
       </div>
-      <button className="close-button" onClick={handleCloseClick}>
-        Close Tab
-      </button>
+      <div className="tab-details-actions">
+        <button
+          className="discard-button"
+          onClick={() => discardTab(tab.id)}
+          disabled={tab.active || tab.discarded}
+        >
+          Discard Tab
+        </button>
+        <button className="close-button" onClick={handleCloseClick}>
+          Close Tab
+        </button>
+      </div>
     </div>
   );
 };
