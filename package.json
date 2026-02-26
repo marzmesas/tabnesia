@@ -6,7 +6,7 @@
     "scripts": {
         "build": "webpack --config webpack.config.js",
         "watch": "webpack --watch --config webpack.config.js",
-        "prepare-dist": "mkdir -p dist/assets && cp src/popup.html dist/ && cp src/background.js dist/ && cp manifest.json dist/ && cp -r assets/* dist/assets/"
+        "prepare-dist": "mkdir -p dist/assets && cp src/popup.html dist/ && cp manifest.json dist/ && cp -r assets/* dist/assets/"
     },
     "author": "",
     "license": "ISC",

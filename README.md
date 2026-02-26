@@ -45,7 +45,7 @@ Install Tabnesia directly from the [Chrome Web Store](https://chromewebstore.goo
 - `src/`: Source code for the extension
 - `dist/`: Built extension files
 - `manifest.json`: Extension manifest file
-- `src/background.js`: Background script for tracking tab access
+- `src/background.ts`: Background script (TypeScript) for tracking tab access
 - `src/components/`: React components for the UI
 - `src/hooks/`: Custom React hooks
 - `src/styles/`: CSS styles
