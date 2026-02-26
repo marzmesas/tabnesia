@@ -28,7 +28,7 @@ The extension provides a clean, intuitive interface with statistics about your t
 ## Installation
 
 ### Chrome Web Store (Recommended)
-Install Tabnesia directly from the [Chrome Web Store](https://chrome.google.com/webstore/detail/tabnesia/[extension-id]).
+Install Tabnesia directly from the [Chrome Web Store](https://chromewebstore.google.com/detail/tabnesia/eaednkmiemlfdnodjhcabecfdnjecjjd).
 
 ### Manual Installation (For Developers)
 1. Clone this repository

@@ -1,7 +1,7 @@
 {
-    "name": "y",
-    "version": "1.0.0",
-    "description": "Tab analytics to improve your RAM usage in Google Chrome. Delete unused tabs to give more room to your computer's performance!",
+    "name": "tabnesia",
+    "version": "1.1.0",
+    "description": "Because we all forget what we opened. Analyze and manage your Chrome tabs with usage statistics.",
     "main": "src/index.tsx",
     "scripts": {
         "build": "webpack --config webpack.config.js",
