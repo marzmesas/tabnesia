@@ -11,7 +11,7 @@ To provide its features, the Extension requires access to the following browser 
 *   **Tab Information:** Access to details about your open tabs, including their URLs, titles, IDs, active status, and grouping status (via the `tabs` and `tabGroups` permissions). This is necessary to list and analyze your tabs.
 *   **Browsing History:** Access to your browsing history (via the `history` permission) is used specifically to determine the last accessed time or usage frequency of tabs, enabling the identification of "Old Tabs" and "Unused Tabs".
 *   **Website Favicons:** Access to website URLs (via the `<all_urls>` host permission) is used **solely** to fetch and display the corresponding favicon (website icon) next to each tab listed within the Extension's interface. This improves visual identification of tabs. The Extension does **not** read, modify, or collect content from these websites.
-*   **Local Storage:** Access to browser storage (via the `storage` permission) is used exclusively to save your user interface preferences, specifically your chosen theme (light or dark).
+*   **Local Storage:** Access to browser storage (via the `storage` permission) is used to save your user interface preferences (your chosen theme: light or dark) and, locally on your device, the last time each open tab was accessed. This last-access data is used only for the extension’s badge and tab lists and is not sent off your device.
 
 **2. How We Use Information**
 
@@ -21,13 +21,14 @@ The information accessed is used solely for the following purposes **within your
 *   To calculate and display tab analytics based on locally processed tab and history data.
 *   To allow you to manage your tabs (e.g., close tabs) directly from the Extension interface.
 *   To remember your chosen theme setting between sessions.
+*   To show the “forgotten tabs” count in the extension icon badge and to categorize tabs (active, inactive, forgotten) using locally stored last-access times.
 
 **All data processing happens locally on your computer within the Chrome browser environment. The Extension does not collect, transmit, or store your browsing data (URLs, history, tab content) on any remote servers.**
 
 **3. Data Storage**
 
-*   **Browsing Data:** Your tab information, browsing history, and website favicons are processed in real-time and are **not** stored persistently by the Extension, except potentially in temporary memory during use.
-*   **User Settings:** Your selected theme preference is the only piece of data stored persistently, using Chrome's `chrome.storage.local` API, which stores data locally on your device.
+*   **Browsing Data:** Your tab information, browsing history, and website favicons are processed in real-time. Tab content is not stored. Last-access times for open tabs are stored locally so the extension can show the badge count and categorize tabs.
+*   **User Settings:** Your selected theme preference is stored persistently using Chrome's `chrome.storage.local` API, which keeps data only on your device.
 
 **4. Data Sharing**
 
@@ -35,7 +36,7 @@ We **do not** share any of the information accessed by the Extension with any th
 
 **5. Security**
 
-We rely on the security mechanisms provided by the Google Chrome browser and the `chrome.storage.local` API to protect the minimal settings data stored locally. Since no browsing data is transmitted or stored remotely, the risk associated with data breaches is minimized.
+We rely on the security mechanisms provided by the Google Chrome browser and the `chrome.storage.local` API to protect the data stored locally (theme preference and tab last-access times). Since no data is transmitted or stored remotely, the risk associated with data breaches is minimized.
 
 **6. Children's Privacy**
 

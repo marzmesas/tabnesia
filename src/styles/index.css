@@ -377,6 +377,14 @@ button:hover {
   to { transform: rotate(360deg); }
 }
 
+.error-message {
+  padding: 16px;
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  color: var(--text-primary);
+  text-align: center;
+}
+
 .old-tabs-section {
   margin-top: 24px;
   position: relative;

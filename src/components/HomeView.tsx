@@ -12,7 +12,7 @@ interface HomeViewProps {
 }
 
 export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
-  const { tabs } = useTabContext();
+  const { tabs, loading, error } = useTabContext();
 
   const now = Date.now();
   const activeCount = tabs.filter(tab => tab.lastAccessed >= now - ACTIVE_THRESHOLD_MS).length;
@@ -26,6 +26,23 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
     (sum, group) => sum + group.tabs.length - 1, 0
   );
 
+  if (error) {
+    return (
+      <>
+        <div className="app-header">
+          <div className="title-container">
+            <h1 className="centered-title">Tabnesia</h1>
+            <p className="subtitle">Because we all forget what we opened.</p>
+          </div>
+          <ThemeToggle />
+        </div>
+        <div className="analytics-wrapper">
+          <div className="error-message">Error: {error}</div>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <div className="app-header">
@@ -36,6 +53,12 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
         <ThemeToggle />
       </div>
       <TabAnalytics />
+      {loading ? (
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Loading tab data...</p>
+        </div>
+      ) : (
       <div className="section-cards">
         <button className="section-card section-card--active" onClick={() => onNavigate('active')}>
           <span className="section-card-title">Active Tabs</span>
@@ -56,6 +79,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
           </button>
         )}
       </div>
+      )}
     </>
   );
 };
