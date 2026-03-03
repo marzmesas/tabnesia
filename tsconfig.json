@@ -23,5 +23,5 @@
   },
   "include": ["src/**/*"],
   "exclude": ["src/**/*.js"],
-  "types": ["chrome"]
+  "types": ["chrome", "vitest/globals"]
 } 
