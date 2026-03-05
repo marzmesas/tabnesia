@@ -155,6 +155,8 @@ export const DuplicateTabs: React.FC<DuplicateTabsProps> = ({ onDetailView }) =>
               <button
                 className="duplicate-group-header"
                 onClick={() => setExpandedGroup(isExpanded ? null : group.normalizedUrl)}
+                aria-expanded={isExpanded}
+                aria-label={`${title}, ${group.tabs.length} duplicate tabs, click to ${isExpanded ? 'collapse' : 'expand'}`}
               >
                 <div className="duplicate-group-info">
                   <span className="duplicate-group-title">{title}</span>
@@ -165,9 +167,9 @@ export const DuplicateTabs: React.FC<DuplicateTabsProps> = ({ onDetailView }) =>
 
               {isExpanded && (
                 <div className="duplicate-group-expanded">
-                  <ul>
+                  <ul role="list" aria-label={`Duplicate tabs for ${title}`}>
                     {group.tabs.map((tab, index) => (
-                      <li key={tab.id}>
+                      <li key={tab.id} aria-label={index === 0 ? `Keep: ${tab.title}` : `Duplicate: ${tab.title}`}>
                         <div className="tab-list-item">
                           <span className="tab-title">
                             {index === 0 && <span className="keeper-badge">Keep</span>}
@@ -175,7 +177,9 @@ export const DuplicateTabs: React.FC<DuplicateTabsProps> = ({ onDetailView }) =>
                             {tab.discarded && <span className="discarded-badge">Discarded</span>}
                           </span>
                         </div>
-                        <button onClick={() => setSelectedTab(tab.id)}>Details</button>
+                        <button onClick={() => setSelectedTab(tab.id)} aria-label={`View details for ${tab.title}`}>
+                          Details
+                        </button>
                       </li>
                     ))}
                   </ul>

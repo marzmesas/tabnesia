@@ -58,22 +58,42 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
           <div className="loading-spinner"></div>
           <p>Loading tab data...</p>
         </div>
+      ) : tabs.length === 0 ? (
+        <div className="empty-state" role="status">
+          <p>No tabs open. Open some tabs to see analytics and manage them here.</p>
+        </div>
       ) : (
-      <div className="section-cards">
-        <button className="section-card section-card--active" onClick={() => onNavigate('active')}>
+      <div className="section-cards" role="navigation" aria-label="Tab categories">
+        <button
+          className="section-card section-card--active"
+          onClick={() => onNavigate('active')}
+          aria-label={`Active Tabs, ${activeCount} tab${activeCount !== 1 ? 's' : ''}`}
+        >
           <span className="section-card-title">Active Tabs</span>
           <span className="section-card-count">{activeCount}</span>
         </button>
-        <button className="section-card section-card--inactive" onClick={() => onNavigate('inactive')}>
+        <button
+          className="section-card section-card--inactive"
+          onClick={() => onNavigate('inactive')}
+          aria-label={`Recently Inactive, ${inactiveCount} tab${inactiveCount !== 1 ? 's' : ''}`}
+        >
           <span className="section-card-title">Recently Inactive</span>
           <span className="section-card-count">{inactiveCount}</span>
         </button>
-        <button className="section-card section-card--forgotten" onClick={() => onNavigate('forgotten')}>
+        <button
+          className="section-card section-card--forgotten"
+          onClick={() => onNavigate('forgotten')}
+          aria-label={`Forgotten Tabs, ${forgottenCount} tab${forgottenCount !== 1 ? 's' : ''}`}
+        >
           <span className="section-card-title">Forgotten Tabs</span>
           <span className="section-card-count">{forgottenCount}</span>
         </button>
         {duplicateCount > 0 && (
-          <button className="section-card section-card--duplicates" onClick={() => onNavigate('duplicates')}>
+          <button
+            className="section-card section-card--duplicates"
+            onClick={() => onNavigate('duplicates')}
+            aria-label={`Duplicate Tabs, ${duplicateCount} duplicate${duplicateCount !== 1 ? 's' : ''}`}
+          >
             <span className="section-card-title">Duplicate Tabs</span>
             <span className="section-card-count">{duplicateCount}</span>
           </button>

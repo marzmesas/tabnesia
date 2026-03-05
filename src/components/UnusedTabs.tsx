@@ -61,9 +61,9 @@ export const UnusedTabs: React.FC<UnusedTabsProps> = ({ onDetailView }) => {
   }
 
   return (
-    <ul>
+    <ul role="list" aria-label="Recently inactive tabs">
       {recentlyInactiveTabs.map(tab => (
-        <li key={tab.id}>
+        <li key={tab.id} aria-label={`Tab: ${tab.title}, last used ${formatTime(tab.lastAccessed)}`}>
           <div className="tab-list-item">
             <span className="tab-title">
               {tab.title}
@@ -71,7 +71,9 @@ export const UnusedTabs: React.FC<UnusedTabsProps> = ({ onDetailView }) => {
             </span>
             <span className="tab-time">{formatTime(tab.lastAccessed)}</span>
           </div>
-          <button onClick={() => setSelectedTab(tab.id)}>Details</button>
+          <button onClick={() => setSelectedTab(tab.id)} aria-label={`View details for ${tab.title}`}>
+            Details
+          </button>
         </li>
       ))}
       {recentlyInactiveTabs.length === 0 && (

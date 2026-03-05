@@ -60,9 +60,9 @@ export const ActiveTabs: React.FC<ActiveTabsProps> = ({ onDetailView }) => {
   }
 
   return (
-    <ul>
+    <ul role="list" aria-label="Active tabs">
       {activeTabs.map(tab => (
-        <li key={tab.id}>
+        <li key={tab.id} aria-label={`Tab: ${tab.title}, last used ${formatTime(tab.lastAccessed)}`}>
           <div className="tab-list-item">
             <span className="tab-title">
               {tab.title}
@@ -70,7 +70,9 @@ export const ActiveTabs: React.FC<ActiveTabsProps> = ({ onDetailView }) => {
             </span>
             <span className="tab-time">{formatTime(tab.lastAccessed)}</span>
           </div>
-          <button onClick={() => setSelectedTab(tab.id)}>Details</button>
+          <button onClick={() => setSelectedTab(tab.id)} aria-label={`View details for ${tab.title}`}>
+            Details
+          </button>
         </li>
       ))}
       {activeTabs.length === 0 && (

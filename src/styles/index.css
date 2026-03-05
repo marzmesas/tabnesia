@@ -385,6 +385,18 @@ button:hover {
   text-align: center;
 }
 
+.empty-state {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--text-secondary);
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+}
+
+.empty-state p {
+  margin: 0;
+}
+
 .old-tabs-section {
   margin-top: 24px;
   position: relative;

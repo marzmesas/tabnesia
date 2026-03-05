@@ -246,11 +246,11 @@ export const OldTabs: React.FC<OldTabsProps> = ({ onDetailView }) => {
           </button>
         </div>
       </div>
-      <ul>
+      <ul role="list" aria-label="Forgotten tabs">
         {oldTabs.map(tab => (
-          <li key={tab.id} className={selectedForClose.has(tab.id) ? 'selected' : ''}>
+          <li key={tab.id} className={selectedForClose.has(tab.id) ? 'selected' : ''} aria-label={`Tab: ${tab.title}`}>
             <div className="tab-list-item">
-              <label className="checkbox-container">
+              <label className="checkbox-container" aria-label={`Select ${tab.title} for batch action`}>
                 <input
                   type="checkbox"
                   checked={selectedForClose.has(tab.id)}
@@ -274,7 +274,9 @@ export const OldTabs: React.FC<OldTabsProps> = ({ onDetailView }) => {
                 </span>
               )}
             </div>
-            <button onClick={() => setSelectedTab(tab.id)}>Details</button>
+            <button onClick={() => setSelectedTab(tab.id)} aria-label={`View details for ${tab.title}`}>
+              Details
+            </button>
           </li>
         ))}
       </ul>
